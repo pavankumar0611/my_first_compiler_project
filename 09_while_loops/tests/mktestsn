@@ -1,0 +1,18 @@
+
+
+
+if [ ! -f ../comp1 ]
+then echo "need to build ../comp1 first!";
+exit 1
+fi
+
+for i in input*
+do if [ ! -f "out.$i" ]
+then
+../comp1 $i
+nasm -f elf64 out.s
+gcc -no-pie -o out out.o
+./out > out.$i
+rm -f out out.s
+fi
+done
