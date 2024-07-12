@@ -1,0 +1,13 @@
+#!/bin/sh
+# Make the output files for each test
+set -x
+
+
+for i in input*c
+do if [ ! -f "out.$i" ]
+   then
+     gcc -o out $i ../lib/printint.c
+     ./out > out.$i
+     rm -f out
+   fi
+done
