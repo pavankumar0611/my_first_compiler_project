@@ -11,6 +11,33 @@ int genlabel(void) {
 	return (id++);
 }
 
+//Generate the code for DOWHILE statement
+static int genDOWHILE( struct ASTnode * n)
+{
+	int Lstart , Lend;
+	//Generate two lables one for default do conditions
+	//and other for body of the while loop 
+	Lstart = genlabel();
+	Lend = genlabel();
+
+	//emit the start label 
+	cglabel(Lstart);
+
+	genAST( n->left ,NOREG , n->op);
+	genfreeregs();
+
+	genAST ( n->right , Lend , n->op);
+	genfreeregs();
+
+	//jump  back to condition and 
+	//emit end label
+	cgjump ( Lstart);
+	cglabel( Lend);
+
+	return ( NOREG);
+}
+
+
 // Generate the code for an IF statement
 // and an optional ELSE clause
 static int genIF(struct ASTnode *n) {
@@ -93,6 +120,8 @@ int genAST(struct ASTnode *n, int label, int parentASTop) {
 			return (genIF(n));
 		case A_WHILE:
 			return (genWHILE(n));
+		case A_DOWHILE:
+			return (genDOWHILE(n));
 		case A_GLUE:
 			// Do each child statement, and free the
 			// registers after each child
@@ -136,7 +165,7 @@ int genAST(struct ASTnode *n, int label, int parentASTop) {
 			// If the parent AST node is an A_IF or A_WHILE, generate
 			// a compare followed by a jump. Otherwise, compare registers
 			// and set one to 1 or 0 based on the comparison.
-			if (parentASTop == A_IF || parentASTop == A_WHILE)
+			if (parentASTop == A_IF || parentASTop == A_WHILE || parentASTop == A_DOWHILE)
 				return (cgcompare_and_jump(n->op, leftreg, rightreg, label));
 			else
 				return (cgcompare_and_set(n->op, leftreg, rightreg));

@@ -22,6 +22,28 @@ static struct ASTnode *single_statement(void);
 //      |     return_statement
 //      ;
 
+static struct ASTnode *do_while_statement(void)
+{
+	struct ASTnode *left , *condAST;
+	//ensure we have do while  and '{'
+	match (T_DOWHILE ,"dowhile");
+
+	// Get the AST for compound statement
+	left = compound_statement();
+
+	match (T_WHILE , "while");
+	lparen();
+
+	condAST = binexpr(0);
+
+	if ( condAST->op < A_EQ || condAST->op > A_GE)
+		fatal ( "bad comparison operator");
+	rparen();
+	semi();
+	//build and return the AST for do while statement
+	return ( mkastnode ( A_DOWHILE , P_NONE, left , NULL , condAST , 0));
+}
+
 
 // if_statement: if_head
 //      |        if_head 'else' compound_statement
@@ -187,6 +209,8 @@ static struct ASTnode *single_statement(void) {
 			return (for_statement());
 		case T_RETURN:
 			return (return_statement());
+		case T_DOWHILE:
+			return (do_while_statement());
 		default:
 			// For now, see if this is an expression.
 			// This catches assignment statements.

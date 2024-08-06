@@ -127,6 +127,10 @@ static int keyword(char *s) {
 			if (!strcmp(s, "void"))
 				return (T_VOID);
 			break;
+		case'd':
+			if ( !strcmp ( s, "do"))
+			return (T_DOWHILE);
+			break;
 	}
 	return (0);
 }
