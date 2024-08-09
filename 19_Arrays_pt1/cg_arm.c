@@ -136,6 +136,10 @@ static void set_var_offset(int id) {
 		if (Gsym[i].stype == S_VARIABLE)
 			offset += 4;
 	}
+	for (int i = 0; i < id ; i++) {
+		if (Gsym[i].stype == S_ARRAY)
+			offset += 4;
+	}
 	// Load r3 with this offset
 	fprintf(Outfile, "\tldr\tr3, .L2+%d\n", offset);
 }
