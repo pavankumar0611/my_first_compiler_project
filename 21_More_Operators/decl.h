@@ -65,6 +65,8 @@ int cgor(int r1, int r2);
 int cgxor(int r1, int r2);
 int cgshl(int r1, int r2);
 int cgshr(int r1, int r2);
+int cglogicaland(int r1, int r2, int cond);
+int cglogicalor(int r1, int r2, int cond);
 
 // expr.c
 struct ASTnode *funccall(void);

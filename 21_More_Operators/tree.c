@@ -74,6 +74,14 @@ void dumpAST(struct ASTnode *n, int label, int level) {
 			dumpAST(n->left, Lend, level+2);
 			dumpAST(n->right, NOLABEL, level+2);
 			return;
+		case A_DOWHILE:
+			Lstart = gendumplabel();
+			for (int i=0; i < level; i++) fprintf(stdout, " ");
+			fprintf(stdout, "A_WHILE, start L%d\n", Lstart);
+			Lend = gendumplabel();
+			dumpAST(n->left, Lend, level+2);
+			dumpAST(n->right, NOLABEL, level+2);
+			return;
 	}
 
 	// Reset level to -2 for A_GLUE
@@ -87,33 +95,56 @@ void dumpAST(struct ASTnode *n, int label, int level) {
 	for (int i=0; i < level; i++) fprintf(stdout, " ");
 	switch (n->op) {
 		case A_GLUE:
-			fprintf(stdout, "\n\n"); return;
+			fprintf(stdout, "\n\n"); 
+			return;
 		case A_FUNCTION:
-			fprintf(stdout, "A_FUNCTION %s\n", Gsym[n->v.id].name); return;
+			fprintf(stdout, "A_FUNCTION %s\n", Gsym[n->v.id].name); 
+			return;
 		case A_ADD:
-			fprintf(stdout, "A_ADD\n"); return;
+			fprintf(stdout, "A_ADD\n"); 
+			return;
 		case A_SUBTRACT:
-			fprintf(stdout, "A_SUBTRACT\n"); return;
+			fprintf(stdout, "A_SUBTRACT\n"); 
+			return;
 		case A_MULTIPLY:
-			fprintf(stdout, "A_MULTIPLY\n"); return;
+			fprintf(stdout, "A_MULTIPLY\n"); 
+			return;
 		case A_DIVIDE:
-			fprintf(stdout, "A_DIVIDE\n"); return;
+			fprintf(stdout, "A_DIVIDE\n"); 
+			return;
 		case A_EQ:
-			fprintf(stdout, "A_EQ\n"); return;
+			fprintf(stdout, "A_EQ\n"); 
+			return;
 		case A_NE:
-			fprintf(stdout, "A_NE\n"); return;
+			fprintf(stdout, "A_NE\n"); 
+			return;
 		case A_LT:
-			fprintf(stdout, "A_LE\n"); return;
+			fprintf(stdout, "A_LE\n"); 
+			return;
 		case A_GT:
-			fprintf(stdout, "A_GT\n"); return;
+			fprintf(stdout, "A_GT\n"); 
+			return;
 		case A_LE:
-			fprintf(stdout, "A_LE\n"); return;
+			fprintf(stdout, "A_LE\n");
+			return;
 		case A_GE:
-			fprintf(stdout, "A_GE\n"); return;
+			fprintf(stdout, "A_GE\n"); 
+			return;
+		case A_AND:
+			fprintf(stdout, "A_AND\n");
+			return;
+		case A_INVERT:
+			fprintf(stdout, "A_INVERT\n");
+			return;
+		case A_LOGNOT:
+			fprintf(stdout, "A_LOGNOT\n");
+			return;
 		case A_INTLIT:
-			fprintf(stdout, "A_INTLIT %d\n", n->v.intvalue); return;
+			fprintf(stdout, "A_INTLIT %d\n", n->v.intvalue); 
+			return;
 		case A_STRLIT:
-			fprintf(stdout, "A_STRLIT rval label L%d\n", n->v.id); return;
+			fprintf(stdout, "A_STRLIT rval label L%d\n", n->v.id); 
+			return;
 		case A_IDENT:
 			if (n->rvalue)
 				fprintf(stdout, "A_IDENT rval %s\n", Gsym[n->v.id].name);
@@ -121,15 +152,20 @@ void dumpAST(struct ASTnode *n, int label, int level) {
 				fprintf(stdout, "A_IDENT %s\n", Gsym[n->v.id].name);
 			return;
 		case A_ASSIGN:
-			fprintf(stdout, "A_ASSIGN\n"); return;
+			fprintf(stdout, "A_ASSIGN\n"); 
+			return;
 		case A_WIDEN:
-			fprintf(stdout, "A_WIDEN\n"); return;
+			fprintf(stdout, "A_WIDEN\n"); 
+			return;
 		case A_RETURN:
-			fprintf(stdout, "A_RETURN\n"); return;
+			fprintf(stdout, "A_RETURN\n"); 
+			return;
 		case A_FUNCCALL:
-			fprintf(stdout, "A_FUNCCALL %s\n", Gsym[n->v.id].name); return;
+			fprintf(stdout, "A_FUNCCALL %s\n", Gsym[n->v.id].name); 
+			return;
 		case A_ADDR:
-			fprintf(stdout, "A_ADDR %s\n", Gsym[n->v.id].name); return;
+			fprintf(stdout, "A_ADDR %s\n", Gsym[n->v.id].name); 
+			return;
 		case A_DEREF:
 			if (n->rvalue)
 				fprintf(stdout, "A_DEREF rval\n");
@@ -154,8 +190,28 @@ void dumpAST(struct ASTnode *n, int label, int level) {
 		case A_NEGATE:
 			fprintf(stdout, "A_NEGATE\n");
 			return;
+		case A_LOGOR:
+			fprintf(stdout, "A_LOGOR\n");
+			return;
+		case A_LOGAND:
+			fprintf(stdout, "A_LOGAND\n");
+			return;
+		case A_OR:
+			fprintf(stdout, "A_OR\n");
+			return;
+		case A_XOR:
+			fprintf(stdout, "A_XOR\n");
+			return;
+		case A_TOBOOL:
+			fprintf(stdout, "A_TOBOOL\n");
+			return;
+		case A_LSHIFT:
+			fprintf(stdout, "A_LSHIFT\n");
+			return;
+		case A_RSHIFT:
+			fprintf(stdout, "A_RSHIFT\n");
+			return;
 		default:
 			fatald("Unknown dumpAST operator", n->op);
 	}
 }
-

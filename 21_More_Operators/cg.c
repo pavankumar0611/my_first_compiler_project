@@ -181,10 +181,53 @@ int cgand(int r1, int r2) {
 	return (r2);
 }
 
+int cglogicaland(int r1, int r2, int cond) {
+	int Lstart = genlabel();
+	int Lfalse = genlabel();
+
+	if (cond == A_FUNCCALL || cond == A_IF ) {
+		fprintf(Outfile, "\tcmpq\t$0, %s\n", reglist[r1]);
+		fprintf(Outfile, "\tje\tL%d\n", Lstart);
+		fprintf(Outfile, "\tcmpq\t$0, %s\n", reglist[r2]);
+		fprintf(Outfile, "\tje\tL%d\n", Lstart);
+		fprintf(Outfile, "\tmovq\t$1, %s\n", reglist[r1]);
+		fprintf(Outfile, "\tjmp\tL%d\n", Lfalse);
+		cglabel(Lstart);
+		fprintf(Outfile, "\tmovq\t$0, %s\n", reglist[r1]);
+		cglabel(Lfalse);
+	}else if (cond == A_WHILE) {
+		cglabel(Lstart -1);
+		fprintf(Outfile, "\tcmpq\t$0, %s\n", reglist[r1]);
+		fprintf(Outfile, "\tje\tL%d\n", Lfalse );
+		fprintf(Outfile, "\tcmpq\t$0, %s\n", reglist[r2]);
+		fprintf(Outfile, "\tjne\tL%d\n",Lstart - 2);
+		cglabel(Lfalse);
+
+	}
+	free_register(r2);
+	return(r1);
+
+}
+
 int cgor(int r1, int r2) {
 	fprintf(Outfile, "\torq\t%s, %s\n", reglist[r1], reglist[r2]);
 	free_register(r1);
 	return (r2);
+}
+
+int cglogicalor(int r1, int r2, int cond) {
+	int Lstart = genlabel();
+	//	int Lend = genlabel();
+
+	if (cond == A_WHILE) {
+		cglabel(Lstart -1);
+		fprintf(Outfile, "\tcmpq\t$0, %s\n", reglist[r1]);
+		fprintf(Outfile, "\tjne\tL%d\n",Lstart-2);
+		fprintf(Outfile, "\tcmpq\t$0, %s\n", reglist[r2]);
+		fprintf(Outfile, "\tjne\tL%d\n",Lstart -2);
+	}
+	free_register(r2);
+	return(r1);
 }
 
 int cgxor(int r1, int r2) {

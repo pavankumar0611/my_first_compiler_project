@@ -89,22 +89,39 @@ static int genWHILE(struct ASTnode *n) {
 	// and output the start label
 	Lstart = genlabel();
 	Lend = genlabel();
+
+	if(n->left->op == A_LOGAND || n->left->op == A_LOGOR) 
+		cgjump(Lend);
+
 	cglabel(Lstart);
 
 	// Generate the condition code followed
 	// by a jump to the end label.
-	genAST(n->left, Lend, n->op);
+	if (n->left->op == A_LOGAND || n->left->op == A_LOGOR)
+		genAST(n->right, NOLABEL, n->op);
+	else
+		genAST(n->left, Lend, n->op);
+	
 	genfreeregs();
 
 	// Generate the compound statement for the body
-	genAST(n->right, NOLABEL, n->op);
-	genfreeregs();
+	if (n->left->op == A_LOGAND || n->left->op == A_LOGOR )
+	       genAST(n->left,Lend, n->op);
+	 else	       
+		genAST(n->right, NOLABEL, n->op);
+	
+	 genfreeregs();
 
 	// Finally output the jump back to the condition,
 	// and the end label
-	cgjump(Lstart);
-	cglabel(Lend);
-	return (NOREG);
+	 if(n->left->op != A_LOGAND && n->left->op != A_LOGOR) {
+		 cgjump(Lstart);
+	 }
+
+	 if(n->left->op != A_LOGOR)
+		 cglabel(Lend);
+
+	 return (NOREG);
 }
 
 // Given an AST, an optional label, and the AST op
@@ -158,8 +175,12 @@ int genAST(struct ASTnode *n, int label, int parentASTop) {
 			return (cgdiv(leftreg, rightreg));
 		case A_AND:
 			return (cgand(leftreg, rightreg));
+		case A_LOGAND:
+			return (cglogicaland(leftreg , rightreg, parentASTop));
 		case A_OR:
 			return (cgor(leftreg, rightreg));
+		case A_LOGOR:
+			return (cglogicalor(leftreg, rightreg, parentASTop));
 		case A_XOR:
 			return (cgxor(leftreg, rightreg));
 		case A_LSHIFT:

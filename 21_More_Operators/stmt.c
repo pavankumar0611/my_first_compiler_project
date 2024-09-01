@@ -64,7 +64,7 @@ static struct ASTnode *if_statement(void) {
 	// and the ')' following. Ensure
 	// the tree's operation is a comparison.
 	condAST = binexpr(0);
-	if (condAST->op < A_EQ || condAST->op > A_GE)
+	if ((condAST->op < A_EQ && condAST->op != A_LOGOR) || (condAST->op > A_GE && condAST->op != A_LOGOR))  
 		condAST = mkastunary(A_TOBOOL , condAST->type, condAST , 0);
 	rparen();
 
@@ -96,7 +96,7 @@ static struct ASTnode *while_statement(void) {
 	// and the ')' following. Ensure
 	// the tree's operation is a comparison.
 	condAST = binexpr(0);
-	if (condAST->op < A_EQ || condAST->op > A_GE)
+	if ((condAST->op < A_EQ && condAST->op != A_LOGOR) || (condAST->op > A_GE && condAST->op != A_LOGOR))
 		condAST = mkastunary(A_TOBOOL , condAST->type, condAST, 0);
 	rparen();
 
