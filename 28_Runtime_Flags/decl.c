@@ -124,8 +124,8 @@ static int param_declaration(int id) {
 	// We have an existing prototype.
     // Check that this type matches the prototype.
     if (param_id) {
-	    if ((id != -1) && (paramcnt != orig_paramcnt))
-    fatals("Parameter count mismatch for function", Symtable[id].name);
+	if(paramcnt >  orig_paramcnt) 
+		 fatals("Parameter count mismatch for function", Symtable[paramcnt].name);
 
 
     if (type != Symtable[param_id].type)
