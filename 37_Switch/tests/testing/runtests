@@ -1,0 +1,28 @@
+#set -x
+#!/bin/sh
+# Run each test and compare
+# against known good output
+
+# Build our compiler if needed
+if [ ! -f ../../cwj ]
+then (cd ../..; make)
+fi
+
+# Try to use each input source file
+for i in input*c
+   # against the known-bad output. Same
+   # mechanism as before
+   do if [ -f "err.$i" ]
+        then
+          echo -n $i
+          ../../cwj $i 2> "trial.$i"
+          cmp -s "err.$i" "trial.$i"
+          if [ "$?" -eq "1" ]
+          then echo ": failed"
+            diff -c "err.$i" "trial.$i"
+            echo
+          else echo ": OK"
+          fi
+        fi
+   rm -f "trial.$i"
+done
