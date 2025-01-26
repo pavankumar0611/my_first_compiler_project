@@ -126,6 +126,7 @@ struct symtable {
 	int *initlist;		// List of initial values
 	struct symtable *next;	// Next symbol in one list
 	struct symtable *member;	// First member of a function, struct,
+	char string_lit;                // variable is string or not
 };
 
 // Abstract Syntax Tree structure

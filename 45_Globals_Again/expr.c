@@ -236,6 +236,13 @@ static struct ASTnode *primary(void) {
 		case T_STRLIT:
 			// For a STRLIT token, generate the assembly for it.
 			// Then make a leaf AST node for it. id is the string's label.
+
+			if (Globhead != NULL ){
+				if(Globtail != NULL)
+					Globtail->string_lit = 1;
+				else
+					Globhead->string_lit = 1;
+			}
 			id = genglobstr(Text);
 			n = mkastleaf(A_STRLIT, pointer_to(P_CHAR), NULL, id);
 			break;

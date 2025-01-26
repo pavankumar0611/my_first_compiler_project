@@ -273,6 +273,7 @@ char *Tstring[] = {
 // Return 1 if token valid, 0 if no tokens left.
 int scan(struct token *t) {
 	int c, tokentype;
+	char *varname;
 
 	// If we have any rejected token, return it
 	if (Rejtoken != NULL) {
@@ -425,6 +426,16 @@ int scan(struct token *t) {
 			// the trailing quote
 			t->intvalue = scanch();
 			t->token = T_INTLIT;
+
+			varname = strdup(Text);
+			if (findglob(varname) != NULL || findlocl(varname)) {
+				if (Globhead != NULL) {
+					if(Globtail != NULL )
+						Globtail->string_lit = 1;
+					else
+						Globhead->string_lit = 1;
+				}
+			}
 			if (next() != '\'')
 				fatal("Expected '\\'' at end of char literal");
 			break;
@@ -432,6 +443,16 @@ int scan(struct token *t) {
 			// Scan in a literal string
 			scanstr(Text);
 			t->token= T_STRLIT;
+
+			varname = strdup(Text);
+			if (findglob(varname) != NULL || findlocl(varname)) {
+				if (Globhead != NULL) {
+					if(Globtail != NULL )
+						Globtail->string_lit = 1;
+					else
+						Globhead->string_lit = 1;
+				}
+			}
 			break;
 		default:
 

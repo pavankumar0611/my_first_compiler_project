@@ -49,6 +49,7 @@ struct symtable *newsym(char *name, int type, struct symtable *ctype,
 	node->stype = stype;
 	node->class = class;
 	node->nelems = nelems;
+	node->string_lit = 0;
 
 	// For pointers and integer types, set the size
 	// of the symbol. structs and union declarations

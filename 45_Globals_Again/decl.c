@@ -131,15 +131,24 @@ int parse_literal(int type) {
 			return(tree->a_intvalue);
 		// We have a zero int literal, so that's a NULL
 		if (tree->op == A_INTLIT && tree->a_intvalue==0)
-			return(0);
+			return(tree->a_intvalue);
+
+		if(tree->op == A_INTLIT && tree->rvalue == 1 && type == tree->type)
+			return(tree->a_intvalue);
 	}
+
+	 if (tree->op == A_INTLIT  && tree->rvalue == 1  && !pointer_to(tree->type))
+        return (tree->a_intvalue);
 
 	// We only get here with an integer literal. The input type
 	// is an integer type and is wide enough to hold the literal value
-	if (inttype(type) && typesize(type, NULL) >= typesize(tree->type, NULL))
+	if (inttype(type) && genprimsize(type) >= genprimsize(tree->type))
 		return(tree->a_intvalue);
 
-	fatal("Type mismatch: literal vs. variable");
+	if(tree->a_intvalue > 255)
+		fatal("Overflow in conversion from int to char value" ); 
+	else
+		fatal("Type mismatch: literal vs. variable");
 	return(0);	// Keep -Wall happy
 }
 

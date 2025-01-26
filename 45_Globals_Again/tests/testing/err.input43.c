@@ -1,1 +1,1 @@
-Type mismatch: literal vs. variable on line 1 of input43.c
+Overflow in conversion from int to char value on line 1 of input43.c

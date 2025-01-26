@@ -553,7 +553,7 @@ int cgprimsize(int type) {
 // Generate a global symbol but not functions
 void cgglobsym(struct symtable *node) {
 	int size, type;
-	int initvalue, i;
+	int initvalue, i, nolabel;
 
 	if (node == NULL)
 		return;
@@ -583,6 +583,11 @@ void cgglobsym(struct symtable *node) {
 		if (node->initlist != NULL)
 			initvalue= node->initlist[i];
 
+        if(initvalue == 0 && node->stype == S_ARRAY)
+            nolabel = 1;
+        else
+            nolabel = 0;
+
 		// Generate the space for this type
 		switch (size) {
 			case 1:
@@ -593,7 +598,7 @@ void cgglobsym(struct symtable *node) {
 				break;
 			case 8:
 				// Generate the pointer to a string literal
-				if (node->initlist != NULL && type== pointer_to(P_CHAR) && initvalue != 0)
+				if (node->initlist != NULL && type== pointer_to(P_CHAR) && node->string_lit && !nolabel)
 					fprintf(Outfile, "\t.quad\tL%d\n", initvalue);
 				else
 					fprintf(Outfile, "\t.quad\t%d\n", initvalue);
