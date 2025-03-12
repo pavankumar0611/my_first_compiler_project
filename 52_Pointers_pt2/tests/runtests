@@ -1,0 +1,47 @@
+#set -x
+#!/bin/sh
+# Run each test and compare
+# against known good output
+
+if [ ! -f ../cwj ]
+then (cd ..; make)
+fi
+
+pass_count=0
+fail_count=0
+failed_tests=()
+
+for i in input*
+do if [ ! -f "out.$i" ]
+   then echo "Can't run test on $i, no output file!"
+   else
+     echo -n "$i"
+     ../cwj -o out "$i"
+     
+	 ./out > "trial.$i"
+     
+	 cmp -s "out.$i" "trial.$i"
+     
+	 if [ "$?" -eq "1" ]
+     then echo ": failed"
+       diff -c "out.$i" "trial.$i"
+	   fail_count=$((fail_count + 1))
+	   failed_tests+=("$i")
+       echo
+    	 else
+	 		echo ": OK"
+			pass_count=$((pass_count + 1))
+     fi
+     rm -f out out.s "trial.$i"
+   fi
+done
+
+echo  "Total passes : $pass_count"
+echo  "Total failed : $fail_count"
+
+if [ $fail_count -gt 0 ]; then
+	echo -e "\nFailed Test Cases : "
+	for test in "${failed_tests[@]}"; do
+		echo $test
+	done
+fi
