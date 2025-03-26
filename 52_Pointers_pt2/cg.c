@@ -406,15 +406,15 @@ int cglogor(int r1, int r2) {
 
 	// Test r1 and jump to true label if true
 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r1], reglist[r1]);
-	fprintf(Outfile, "\tjne\tL%d\n", Ltrue);
+	fprintf(Outfile, "\tjne \tL%d\n", Ltrue);
 
 	// Test r2 and jump to true label if true
 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r2], reglist[r2]);
-	fprintf(Outfile, "\tjne\tL%d\n", Ltrue);
+	fprintf(Outfile, "\tjne \tL%d\n", Ltrue);
 
 	// Didn't jump, so result is false
 	fprintf(Outfile, "\tmovq\t$0, %s\n", reglist[r1]);
-	fprintf(Outfile, "\tjmp\tL%d\n", Lend);
+	fprintf(Outfile, "\tjmp \tL%d\n", Lend);
 
 	// Someone jumped to the true label, so result is true
 	cglabel(Ltrue);
@@ -433,15 +433,15 @@ int cglogand(int r1, int r2) {
 
 	// Test r1 and jump to false label if not true
 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r1], reglist[r1]);
-	fprintf(Outfile, "\tje\tL%d\n", Lfalse);
+	fprintf(Outfile, "\tje  \tL%d\n", Lfalse);
 
 	// Test r2 and jump to false label if not true
 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r2], reglist[r2]);
-	fprintf(Outfile, "\tje\tL%d\n", Lfalse);
+	fprintf(Outfile, "\tje  \tL%d\n", Lfalse);
 
 	// Didn't jump, so result is true
 	fprintf(Outfile, "\tmovq\t$1, %s\n", reglist[r1]);
-	fprintf(Outfile, "\tjmp\tL%d\n", Lend);
+	fprintf(Outfile, "\tjmp \tL%d\n", Lend);
 
 	// Someone jumped to the false label, so result is false
 	cglabel(Lfalse);
@@ -809,4 +809,21 @@ void cgswitch(int reg, int casecount, int toplabel,
 // Move value between registers
 void cgmove(int r1, int r2) {
 	fprintf(Outfile, "\tmovq\t%s, %s\n", reglist[r1], reglist[r2]);
+}
+
+// List of cmov comparison instructions
+// in AST order: A_EQ, A_NE, A_LT, A_GT, A_LE, A_GE
+static char *cmov_cmplist[] =
+{ "cmove", "cmovne", "cmovl", "cmovg", "cmovle", "cmovge" };
+
+// cmp and generate the conditional mov instruction
+void  Conditional_mov(int ASTop, int r1, int r2, int r3)
+{
+	//check the range of the AST operation
+	if (ASTop < A_EQ || ASTop > A_GE)
+		fatal("BAd ASTop in cond_mov()");
+
+	fprintf(Outfile, "\tcmpq\t%s, %s\n", reglist[r3], reglist[r3 - 1]);
+	fprintf(Outfile, "\t%s\t%s, %s\n", cmov_cmplist[ASTop - A_EQ], reglist[r2], reglist[r1]);
+	freeall_registers(NOREG);
 }

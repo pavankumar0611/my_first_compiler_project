@@ -63,8 +63,7 @@ static struct ASTnode *if_statement(void) {
 	// and the ')' following. Ensure
 	// the tree's operation is a comparison.
 	condAST = binexpr(0);
-//if ((condAST->op < A_EQ && condAST->op != A_LOGOR) || (condAST->op > A_GE && condAST->op != A_LOGOR))	
-		  if (condAST->op < A_EQ || condAST->op > A_GE)
+	if (condAST->op < A_EQ || condAST->op > A_GE)
 		condAST = mkastunary(A_TOBOOL , condAST->type, condAST->ctype, condAST , NULL, 0);
 	rparen();
 
@@ -277,7 +276,7 @@ static struct ASTnode *switch_statement(void) {
 
 						   // If the next token is a T_CASE, the existing case will fall
 						   // into the next case. Otherwise, parse the case body.
-						   if (Token.token == T_CASE) 
+						   if (Token.token == T_CASE || Token.token ==  T_RBRACE || Token.token == T_DEFAULT)
 							   body= NULL;
 						   else
 							   body= compound_statement(1);

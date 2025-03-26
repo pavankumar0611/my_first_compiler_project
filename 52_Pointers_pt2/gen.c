@@ -11,6 +11,9 @@ int genlabel(void) {
 	return (labelid++);
 }
 
+//optimized  ternary operator variable
+int Cond_mov;
+
 //Generate the code for DOWHILE statement
 static int genDOWHILE( struct ASTnode * n)
 {
@@ -189,6 +192,24 @@ static int gen_funccall(struct ASTnode *n) {
 	return (cgcall(n->sym, numargs));
 }
 
+// optimized ternary function
+// takes ternary node has input
+//return knows value in reg
+static int optimized_ternary(struct ASTnode *n)
+{
+	Cond_mov = 1;
+	int r1, r2, r3;
+
+	r1 = genAST(n->right, NOLABEL, NOLABEL, NOLABEL, NOLABEL);
+	r2 = genAST(n->mid, NOLABEL, NOLABEL, NOLABEL, NOLABEL);
+	r3 = genAST(n->left, NOLABEL, NOLABEL, NOLABEL, n->op);
+
+	Conditional_mov(n->left->op,r1, r2, r3);
+
+	// return the value stored by cmov instruction register
+	return (r1);
+}
+
 // Generate code for a ternary expression
 static int gen_ternary(struct ASTnode *n) {
 	int Lfalse, Lend;
@@ -247,7 +268,10 @@ int genAST(struct ASTnode *n, int iflabel, int looptoplabel, int loopendlabel, i
 		case A_SWITCH:
 			return (genSWITCH(n));
 		case A_TERNARY:
-			return (gen_ternary(n));
+			if ((n->mid->op < A_ADD || n->mid->op > A_DIVIDE ) && (n->right->op < A_ADD || n->right->op > A_DIVIDE))
+				return (optimized_ternary(n));		// optimizing the simpler expr in ternary operator exm ::   x= y != 3 ? 6 : 8;
+			else
+				return (gen_ternary(n));
 		case A_GLUE:
 			// Do each child statement, and free the
 			// registers after each child
@@ -306,7 +330,12 @@ int genAST(struct ASTnode *n, int iflabel, int looptoplabel, int loopendlabel, i
 			// a compare followed by a jump. Otherwise, compare registers
 			// and set one to 1 or 0 based on the comparison.
 			if (parentASTop == A_IF || parentASTop == A_WHILE || parentASTop == A_DOWHILE || parentASTop == A_TERNARY)
-				return (cgcompare_and_jump(n->op, leftreg, rightreg, iflabel));
+				if (Cond_mov == 1){
+					Cond_mov = 0;
+					return (rightreg);  // For conditional just return lastly loaded reg
+				}
+				else
+					return (cgcompare_and_jump(n->op, leftreg, rightreg, iflabel));
 			else
 				return (cgcompare_and_set(n->op, leftreg, rightreg));
 		case A_INTLIT:

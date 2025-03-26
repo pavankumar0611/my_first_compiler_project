@@ -65,7 +65,7 @@ struct symtable *newsym(char *name, int type, struct symtable *ctype, int stype,
 
 // Add a symbol to the global symbol list
 struct symtable *addglob(char *name, int type, struct symtable *ctype, int stype, int class, int nelems, int posn) {
-	
+
 	struct symtable *sym = newsym(name, type, ctype, stype, class, nelems, posn);
 	// For structs and unions, copy the size from the type node
 	if (type== P_STRUCT || type== P_UNION)
@@ -76,7 +76,7 @@ struct symtable *addglob(char *name, int type, struct symtable *ctype, int stype
 
 // Add a symbol to the local symbol list
 struct symtable *addlocl(char *name, int type, struct symtable *ctype, int stype, int nelems) {
-	
+
 	struct symtable *sym = newsym(name, type, ctype, stype, C_LOCAL, nelems, 0);
 	// For structs and unions, copy the size from the type node
 	if (type== P_STRUCT || type== P_UNION)
@@ -87,7 +87,7 @@ struct symtable *addlocl(char *name, int type, struct symtable *ctype, int stype
 
 // Add a symbol to the parameter list
 struct symtable *addparm(char *name, int type, struct symtable *ctype, int stype) {
-	
+
 	struct symtable *sym = newsym(name, type, ctype, stype, C_PARAM, 1, 0);
 	appendsym(&Parmhead, &Parmtail, sym);
 	return (sym);
@@ -95,7 +95,7 @@ struct symtable *addparm(char *name, int type, struct symtable *ctype, int stype
 
 // Add a symbol to the temporary member list
 struct symtable *addmemb(char *name, int type, struct symtable *ctype, int stype, int nelems) {
-	
+
 	struct symtable *sym = newsym(name, type, ctype, stype, C_MEMBER, nelems, 0);
 	// For structs and unions, copy the size from the type node
 	if (type== P_STRUCT || type== P_UNION)

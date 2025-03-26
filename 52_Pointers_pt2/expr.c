@@ -73,142 +73,142 @@ static struct ASTnode *funccall(void) {
 
 // Parse the index into an array and return an AST tree for it
 static struct ASTnode *array_access(struct ASTnode *left) {
-  struct ASTnode *right;
+	struct ASTnode *right;
 
-  // Check that the sub-tree is a pointer
-  if (!ptrtype(left->type))
-    fatal("Not an array or pointer");
+	// Check that the sub-tree is a pointer
+	if (!ptrtype(left->type))
+		fatal("Not an array or pointer");
 
-  // Get the '['
-  scan(&Token);
+	// Get the '['
+	scan(&Token);
 
-  // Parse the following expression
-  right = binexpr(0);
+	// Parse the following expression
+	right = binexpr(0);
 
-  // Get the ']'
-  match(T_RBRACKET, "]");
+	// Get the ']'
+	match(T_RBRACKET, "]");
 
-  // Ensure that this is of int type
-  if (!inttype(right->type))
-    fatal("Array index is not of integer type");
+	// Ensure that this is of int type
+	if (!inttype(right->type))
+		fatal("Array index is not of integer type");
 
-  // Make the left tree an rvalue
-  left->rvalue = 1;
+	// Make the left tree an rvalue
+	left->rvalue = 1;
 
-  // Scale the index by the size of the element's type
-  right = modify_type(right, left->type, left->ctype, A_ADD);
+	// Scale the index by the size of the element's type
+	right = modify_type(right, left->type, left->ctype, A_ADD);
 
-  // Return an AST tree where the array's base has the offset added to it,
-  // and dereference the element. Still an lvalue at this point.
-  left =
-    mkastnode(A_ADD, left->type, left->ctype, left, NULL, right, NULL, 0);
-  left =
-    mkastunary(A_DEREF, value_at(left->type), left->ctype, left, NULL, 0);
-  return (left);
+	// Return an AST tree where the array's base has the offset added to it,
+	// and dereference the element. Still an lvalue at this point.
+	left =
+		mkastnode(A_ADD, left->type, left->ctype, left, NULL, right, NULL, 0);
+	left =
+		mkastunary(A_DEREF, value_at(left->type), left->ctype, left, NULL, 0);
+	return (left);
 }
 
 // Parse the member reference of a struct or union
 // and return an AST tree for it. If withpointer is true,
 // the access is through a pointer to the member.
 static struct ASTnode *member_access(struct ASTnode *left, int withpointer) {
-  struct ASTnode *right;
-  struct symtable *typeptr;
-  struct symtable *m;
+	struct ASTnode *right;
+	struct symtable *typeptr;
+	struct symtable *m;
 
-  // Check that the left AST tree is a pointer to struct or union
-  if (withpointer && left->type != pointer_to(P_STRUCT)
-      && left->type != pointer_to(P_UNION))
-    fatal("Expression is not a pointer to a struct/union");
+	// Check that the left AST tree is a pointer to struct or union
+	if (withpointer && left->type != pointer_to(P_STRUCT)
+			&& left->type != pointer_to(P_UNION))
+		fatal("Expression is not a pointer to a struct/union");
 
-  // Or, check that the left AST tree is a struct or union.
-  // If so, change it from an A_IDENT to an A_ADDR so that
-  // we get the base address, not the value at this address.
-  if (!withpointer) {
-    if (left->type == P_STRUCT || left->type == P_UNION)
-      left->op = A_ADDR;
-    else
-      fatal("Expression is not a struct/union");
-  }
+	// Or, check that the left AST tree is a struct or union.
+	// If so, change it from an A_IDENT to an A_ADDR so that
+	// we get the base address, not the value at this address.
+	if (!withpointer) {
+		if (left->type == P_STRUCT || left->type == P_UNION)
+			left->op = A_ADDR;
+		else
+			fatal("Expression is not a struct/union");
+	}
 
-  // Get the details of the composite type
-  typeptr = left->ctype;
+	// Get the details of the composite type
+	typeptr = left->ctype;
 
-  // Skip the '.' or '->' token and get the member's name
-  scan(&Token);
-  ident();
+	// Skip the '.' or '->' token and get the member's name
+	scan(&Token);
+	ident();
 
-  // Find the matching member's name in the type
-  // Die if we can't find it
-  for (m = typeptr->member; m != NULL; m = m->next)
-    if (!strcmp(m->name, Text))
-      break;
-  if (m == NULL)
-    fatals("No member found in struct/union: ", Text);
+	// Find the matching member's name in the type
+	// Die if we can't find it
+	for (m = typeptr->member; m != NULL; m = m->next)
+		if (!strcmp(m->name, Text))
+			break;
+	if (m == NULL)
+		fatals("No member found in struct/union: ", Text);
 
-  // Make the left tree an rvalue
-  left->rvalue = 1;
+	// Make the left tree an rvalue
+	left->rvalue = 1;
 
-  // Build an A_INTLIT node with the offset
- if (m->st_posn)
- 	right = mkastleaf(A_INTLIT, P_INT, NULL, NULL, m->st_posn);
+	// Build an A_INTLIT node with the offset
+	if (m->st_posn)
+		right = mkastleaf(A_INTLIT, P_INT, NULL, NULL, m->st_posn);
 
-  // Add the member's offset to the base of the struct/union
-  // and dereference it. Still an lvalue at this point
-  if (m->st_posn)
-  	left =  mkastnode(A_ADD, pointer_to(m->type), m->ctype, left, NULL, right, NULL, 0);
-  else
-  	left->type = pointer_to(m->type);
+	// Add the member's offset to the base of the struct/union
+	// and dereference it. Still an lvalue at this point
+	if (m->st_posn)
+		left =  mkastnode(A_ADD, pointer_to(m->type), m->ctype, left, NULL, right, NULL, 0);
+	else
+		left->type = pointer_to(m->type);
 
-  left = mkastunary(A_DEREF, m->type, m->ctype, left, NULL, 0);
+	left = mkastunary(A_DEREF, m->type, m->ctype, left, NULL, 0);
 
-  return (left);
+	return (left);
 }
 
 // Parse a parenthesised expression and
 // return an AST node representing it.
 static struct ASTnode *paren_expression(void) {
-  struct ASTnode *n;
-  int type = 0;
-  struct symtable *ctype = NULL;
+	struct ASTnode *n;
+	int type = 0;
+	struct symtable *ctype = NULL;
 
-  // Beginning of a parenthesised expression, skip the '('.
-  scan(&Token);
+	// Beginning of a parenthesised expression, skip the '('.
+	scan(&Token);
 
-  // If the token after is a type identifier, this is a cast expression
-  switch (Token.token) {
-  case T_IDENT:
-    // We have to see if the identifier matches a typedef.
-    // If not, treat it as an expression.
-    if (findtypedef(Text) == NULL) {
-      n = binexpr(0);
-      break;
-    }
-  case T_VOID:
-  case T_CHAR:
-  case T_INT:
-  case T_LONG:
-  case T_STRUCT:
-  case T_UNION:
-  case T_ENUM:
-    // Get the type inside the parentheses
-    type = parse_cast(&ctype);
+	// If the token after is a type identifier, this is a cast expression
+	switch (Token.token) {
+		case T_IDENT:
+			// We have to see if the identifier matches a typedef.
+			// If not, treat it as an expression.
+			if (findtypedef(Text) == NULL) {
+				n = binexpr(0);
+				break;
+			}
+		case T_VOID:
+		case T_CHAR:
+		case T_INT:
+		case T_LONG:
+		case T_STRUCT:
+		case T_UNION:
+		case T_ENUM:
+			// Get the type inside the parentheses
+			type = parse_cast(&ctype);
 
-    // Skip the closing ')' and then parse the following expression
-    rparen();
+			// Skip the closing ')' and then parse the following expression
+			rparen();
 
-  default:
-    n = binexpr(0);		// Scan in the expression
-  }
+		default:
+			n = binexpr(0);		// Scan in the expression
+	}
 
-  // We now have at least an expression in n, and possibly a non-zero type
-  // in type if there was a cast. Skip the closing ')' if there was no cast.
-  if (type == 0)
-    rparen();
-  else
-    // Otherwise, make a unary AST node for the cast
-    n->type = type;
+	// We now have at least an expression in n, and possibly a non-zero type
+	// in type if there was a cast. Skip the closing ')' if there was no cast.
+	if (type == 0)
+		rparen();
+	else
+		// Otherwise, make a unary AST node for the cast
+		n->type = type;
 	//n = mkastunary(A_CAST, type, ctype, n, NULL, 0);
-  return (n);
+	return (n);
 }
 
 // Parse a primary factor and return an
@@ -264,36 +264,36 @@ static struct ASTnode *primary(void) {
 			break;
 
 		case T_IDENT:
-// If the identifier matches an enum value,
-    // return an A_INTLIT node
-    if ((enumptr = findenumval(Text)) != NULL) {
-      n = mkastleaf(A_INTLIT, P_INT, NULL, NULL, enumptr->st_posn);
-      break;
-    }
-    // See if this identifier exists as a symbol. For arrays, set rvalue to 1.
-    if ((varptr = findsymbol(Text)) == NULL)
-      fatals("Unknown variable or function", Text);
-    switch (varptr->stype) {
-    case S_VARIABLE:
-      n = mkastleaf(A_IDENT, varptr->type, varptr->ctype, varptr, 0);
-      break;
-    case S_ARRAY:
-      n = mkastleaf(A_ADDR, varptr->type, varptr->ctype, varptr, 0);
-      n->rvalue = 1;
-      break;
-    case S_FUNCTION:
-      // Function call, see if the next token is a left parenthesis
-      scan(&Token);
-      if (Token.token != T_LPAREN)
-	fatals("Function name used without parentheses", Text);
-      return (funccall());
-    default:
-      fatals("Identifier not a scalar or array variable", Text);
-    }
-    break;
+			// If the identifier matches an enum value,
+			// return an A_INTLIT node
+			if ((enumptr = findenumval(Text)) != NULL) {
+				n = mkastleaf(A_INTLIT, P_INT, NULL, NULL, enumptr->st_posn);
+				break;
+			}
+			// See if this identifier exists as a symbol. For arrays, set rvalue to 1.
+			if ((varptr = findsymbol(Text)) == NULL)
+				fatals("Unknown variable or function", Text);
+			switch (varptr->stype) {
+				case S_VARIABLE:
+					n = mkastleaf(A_IDENT, varptr->type, varptr->ctype, varptr, 0);
+					break;
+				case S_ARRAY:
+					n = mkastleaf(A_ADDR, varptr->type, varptr->ctype, varptr, 0);
+					n->rvalue = 1;
+					break;
+				case S_FUNCTION:
+					// Function call, see if the next token is a left parenthesis
+					scan(&Token);
+					if (Token.token != T_LPAREN)
+						fatals("Function name used without parentheses", Text);
+					return (funccall());
+				default:
+					fatals("Identifier not a scalar or array variable", Text);
+			}
+			break;
 
 		case T_LPAREN:
-   return (paren_expression());
+			return (paren_expression());
 		default:
 			fatals("Expecting a primary expression, got token", Token.tokstr);
 	}
@@ -307,63 +307,63 @@ static struct ASTnode *primary(void) {
 // an AST node representing it. The
 // identifier is already in Text.
 static struct ASTnode *postfix(void) {
-  struct ASTnode *n;
+	struct ASTnode *n;
 
-  // Get the primary expression
-  n = primary();
+	// Get the primary expression
+	n = primary();
 
-  // Loop until there are no more postfix operators
-  while (1) {
-    switch (Token.token) {
-    case T_LBRACKET:
-      // An array reference
-      n = array_access(n);
-      break;
+	// Loop until there are no more postfix operators
+	while (1) {
+		switch (Token.token) {
+			case T_LBRACKET:
+				// An array reference
+				n = array_access(n);
+				break;
 
-    case T_DOT:
-      // Access into a struct or union
-      n = member_access(n, 0);
-      break;
+			case T_DOT:
+				// Access into a struct or union
+				n = member_access(n, 0);
+				break;
 
-    case T_ARROW:
-      // Pointer access into a struct or union
-      n = member_access(n, 1);
-      break;
+			case T_ARROW:
+				// Pointer access into a struct or union
+				n = member_access(n, 1);
+				break;
 
-    case T_INC:
-      // Post-increment: skip over the token
-      if (n->rvalue == 1)
-	fatal("Cannot ++ on rvalue");
-      scan(&Token);
+			case T_INC:
+				// Post-increment: skip over the token
+				if (n->rvalue == 1)
+					fatal("Cannot ++ on rvalue");
+				scan(&Token);
 
-      // Can't do it twice
-      if (n->op == A_POSTINC || n->op == A_POSTDEC)
-	fatal("Cannot ++ and/or -- more than once");
+				// Can't do it twice
+				if (n->op == A_POSTINC || n->op == A_POSTDEC)
+					fatal("Cannot ++ and/or -- more than once");
 
-      // and change the AST operation
-      n->op = A_POSTINC;
-      break;
+				// and change the AST operation
+				n->op = A_POSTINC;
+				break;
 
-    case T_DEC:
-      // Post-decrement: skip over the token
-      if (n->rvalue == 1)
-	fatal("Cannot -- on rvalue");
-      scan(&Token);
+			case T_DEC:
+				// Post-decrement: skip over the token
+				if (n->rvalue == 1)
+					fatal("Cannot -- on rvalue");
+				scan(&Token);
 
-      // Can't do it twice
-      if (n->op == A_POSTINC || n->op == A_POSTDEC)
-	fatal("Cannot ++ and/or -- more than once");
+				// Can't do it twice
+				if (n->op == A_POSTINC || n->op == A_POSTDEC)
+					fatal("Cannot ++ and/or -- more than once");
 
-      // and change the AST operation
-      n->op = A_POSTDEC;
-      break;
+				// and change the AST operation
+				n->op = A_POSTDEC;
+				break;
 
-    default:
-      return (n);
-    }
-  }
+			default:
+				return (n);
+		}
+	}
 
-  return (NULL);		// Keep -Wall happy
+	return (NULL);		// Keep -Wall happy
 }
 
 // Convert a binary operator token into a binary AST operation.
@@ -466,8 +466,8 @@ struct ASTnode *prefix(void) {
 			// make the child an rvalue. Because chars are unsigned,
 			// also widen this to int so that it's signed
 			tree->rvalue = 1;
-			    if (tree->type == P_CHAR)
-      tree->type = P_INT;
+			if (tree->type == P_CHAR)
+				tree->type = P_INT;
 			tree = mkastunary(A_NEGATE, tree->type, tree->ctype, tree, NULL, 0);
 			break;
 		case T_INVERT:
@@ -527,119 +527,119 @@ struct ASTnode *prefix(void) {
 // Return an AST tree whose root is a binary operator.
 // Parameter ptp is the previous token's precedence.
 struct ASTnode *binexpr(int ptp) {
-  struct ASTnode *left, *right;
-  struct ASTnode *ltemp, *rtemp;
-  int ASTop;
-  int tokentype;
+	struct ASTnode *left, *right;
+	struct ASTnode *ltemp, *rtemp;
+	int ASTop;
+	int tokentype;
 
-  // Get the tree on the left.
-  // Fetch the next token at the same time.
-  left = prefix();
+	// Get the tree on the left.
+	// Fetch the next token at the same time.
+	left = prefix();
 
-  // If we hit one of several terminating tokens, return just the left node
-  tokentype = Token.token;
-  if (tokentype == T_SEMI || tokentype == T_RPAREN ||
-      tokentype == T_RBRACKET || tokentype == T_COMMA ||
-      tokentype == T_COLON || tokentype == T_RBRACE) {
-    left->rvalue = 1;
-    return (left);
-  }
-  // While the precedence of this token is more than that of the
-  // previous token precedence, or it's right associative and
-  // equal to the previous token's precedence
-  while ((op_precedence(tokentype) > ptp) ||
-	 (rightassoc(tokentype) && op_precedence(tokentype) == ptp)) {
-    // Fetch in the next integer literal
-    scan(&Token);
+	// If we hit one of several terminating tokens, return just the left node
+	tokentype = Token.token;
+	if (tokentype == T_SEMI || tokentype == T_RPAREN ||
+			tokentype == T_RBRACKET || tokentype == T_COMMA ||
+			tokentype == T_COLON || tokentype == T_RBRACE) {
+		left->rvalue = 1;
+		return (left);
+	}
+	// While the precedence of this token is more than that of the
+	// previous token precedence, or it's right associative and
+	// equal to the previous token's precedence
+	while ((op_precedence(tokentype) > ptp) ||
+			(rightassoc(tokentype) && op_precedence(tokentype) == ptp)) {
+		// Fetch in the next integer literal
+		scan(&Token);
 
-    // Recursively call binexpr() with the
-    // precedence of our token to build a sub-tree
-    right = binexpr(OpPrec[tokentype]);
+		// Recursively call binexpr() with the
+		// precedence of our token to build a sub-tree
+		right = binexpr(OpPrec[tokentype]);
 
-    // Determine the operation to be performed on the sub-trees
-    ASTop = binastop(tokentype);
+		// Determine the operation to be performed on the sub-trees
+		ASTop = binastop(tokentype);
 
-    switch (ASTop) {
-    case A_TERNARY:
-      // Ensure we have a ':' token, scan in the expression after it
-      match(T_COLON, ":");
-      ltemp = binexpr(0);
+		switch (ASTop) {
+			case A_TERNARY:
+				// Ensure we have a ':' token, scan in the expression after it
+				match(T_COLON, ":");
+				ltemp = binexpr(0);
 
-      // Build and return the AST for this statement. Use the middle
-      // expression's type as the return type. XXX We should also
-      // consider the third expression's type.
-      return (mkastnode
-	      (A_TERNARY, right->type, right->ctype, left, right, ltemp,
-	       NULL, 0));
+				// Build and return the AST for this statement. Use the middle
+				// expression's type as the return type. XXX We should also
+				// consider the third expression's type.
+				return (mkastnode
+						(A_TERNARY, right->type, right->ctype, left, right, ltemp,
+						 NULL, 0));
 
-    case A_ASSIGN:
-      // Assignment
-      // Make the right tree into an rvalue
-      right->rvalue = 1;
+			case A_ASSIGN:
+				// Assignment
+				// Make the right tree into an rvalue
+				right->rvalue = 1;
 
-      // Ensure the right's type matches the left
-      right = modify_type(right, left->type, left->ctype, 0);
-      if (right == NULL)
-	fatal("Incompatible expression in assignment");
+				// Ensure the right's type matches the left
+				right = modify_type(right, left->type, left->ctype, 0);
+				if (right == NULL)
+					fatal("Incompatible expression in assignment");
 
-      // Make an assignment AST tree. However, switch
-      // left and right around, so that the right expression's
-      // code will be generated before the left expression
-      ltemp = left;
-      left = right;
-      right = ltemp;
-      break;
+				// Make an assignment AST tree. However, switch
+				// left and right around, so that the right expression's
+				// code will be generated before the left expression
+				ltemp = left;
+				left = right;
+				right = ltemp;
+				break;
 
-    default:
-      // We are not doing a ternary or assignment, so both trees should
-      // be rvalues. Convert both trees into rvalue if they are lvalue trees
-      left->rvalue = 1;
-      right->rvalue = 1;
+			default:
+				// We are not doing a ternary or assignment, so both trees should
+				// be rvalues. Convert both trees into rvalue if they are lvalue trees
+				left->rvalue = 1;
+				right->rvalue = 1;
 
-      // Ensure the two types are compatible by trying
-      // to modify each tree to match the other's type.
-      ltemp = modify_type(left, right->type, right->ctype, ASTop);
-      rtemp = modify_type(right, left->type, left->ctype, ASTop);
-      if (ltemp == NULL && rtemp == NULL)
-	fatal("Incompatible types in binary expression");
-      if (ltemp != NULL)
-	left = ltemp;
-      if (rtemp != NULL)
-	right = rtemp;
-    }
+				// Ensure the two types are compatible by trying
+				// to modify each tree to match the other's type.
+				ltemp = modify_type(left, right->type, right->ctype, ASTop);
+				rtemp = modify_type(right, left->type, left->ctype, ASTop);
+				if (ltemp == NULL && rtemp == NULL)
+					fatal("Incompatible types in binary expression");
+				if (ltemp != NULL)
+					left = ltemp;
+				if (rtemp != NULL)
+					right = rtemp;
+		}
 
-    // Join that sub-tree with ours. Convert the token
-    // into an AST operation at the same time.
-    left =
-      mkastnode(binastop(tokentype), left->type, left->ctype, left, NULL,
-		right, NULL, 0);
+		// Join that sub-tree with ours. Convert the token
+		// into an AST operation at the same time.
+		left =
+			mkastnode(binastop(tokentype), left->type, left->ctype, left, NULL,
+					right, NULL, 0);
 
-    // Some operators produce an int result regardless of their operands
-    switch (binastop(tokentype)) {
-    case A_LOGOR:
-    case A_LOGAND:
-    case A_EQ:
-    case A_NE:
-    case A_LT:
-    case A_GT:
-    case A_LE:
-    case A_GE:
-      left->type = P_INT;
-    }
+		// Some operators produce an int result regardless of their operands
+		switch (binastop(tokentype)) {
+			case A_LOGOR:
+			case A_LOGAND:
+			case A_EQ:
+			case A_NE:
+			case A_LT:
+			case A_GT:
+			case A_LE:
+			case A_GE:
+				left->type = P_INT;
+		}
 
-    // Update the details of the current token.
-    // If we hit a terminating token, return just the left node
-    tokentype = Token.token;
-    if (tokentype == T_SEMI || tokentype == T_RPAREN ||
-	tokentype == T_RBRACKET || tokentype == T_COMMA ||
-	tokentype == T_COLON || tokentype == T_RBRACE) {
-      left->rvalue = 1;
-      return (left);
-    }
-  }
+		// Update the details of the current token.
+		// If we hit a terminating token, return just the left node
+		tokentype = Token.token;
+		if (tokentype == T_SEMI || tokentype == T_RPAREN ||
+				tokentype == T_RBRACKET || tokentype == T_COMMA ||
+				tokentype == T_COLON || tokentype == T_RBRACE) {
+			left->rvalue = 1;
+			return (left);
+		}
+	}
 
-  // Return the tree we have when the precedence
-  // is the same or lower
-  left->rvalue = 1;
-  return (left);
+	// Return the tree we have when the precedence
+	// is the same or lower
+	left->rvalue = 1;
+	return (left);
 }

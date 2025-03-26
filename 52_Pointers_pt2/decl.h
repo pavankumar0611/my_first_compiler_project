@@ -72,6 +72,7 @@ int cglogor(int r1, int r2);
 int cglogand(int r1, int r2);
 void 	cgswitch(int reg, int casecount, int toplabel, int *caselabel, int *caseval, int defaultlabel);
 void	cgmove(int r1, int r2);
+void	Conditional_mov(int op, int r1, int r2, int r3);
 
 // expr.c
 struct ASTnode *expression_list(int endtoken);
