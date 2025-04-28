@@ -400,7 +400,7 @@ int cgand(int r1, int r2) {
 }
 
 int cgor(int r1, int r2) {
-  fprintf(Outfile, "\torq\t%s, %s\n", reglist[r2], reglist[r1]);
+  fprintf(Outfile, "\torq \t%s, %s\n", reglist[r2], reglist[r1]);
   free_register(r2);
   return (r1);
 }
