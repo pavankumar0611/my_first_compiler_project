@@ -1,0 +1,48 @@
+#set -x
+#!/bin/sh
+# Run each test and compare
+# against known good output
+
+# Build our compiler if needed
+if [ ! -f ../../cwj3 ]
+then (cd ../..; make cwj3 )
+fi
+
+pass_count=0;
+fail_count=0;
+failed_tests=()         #array to store name of failed test cases
+
+# Try to use each input source file
+for i in input*c
+   # against the known-bad output. Same
+   # mechanism as before
+   do if [ -f "err.$i" ]
+        then
+          echo -n $i
+          ../../cwj3 $i 2> "trial.$i"
+          cmp -s "err.$i" "trial.$i"
+
+          if [ "$?" -eq "1" ]
+          then echo ": failed"
+            diff -c "err.$i" "trial.$i"
+                        echo
+                        fail_count=$((fail_count + 1))
+                        failed_tests+=("$i")
+            echo
+          else
+                        echo ": OK"
+                        pass_count=$((pass_count + 1))
+          fi
+        fi
+   rm -f "trial.$i"
+done
+
+echo "Total Passed: $pass_count"
+echo "Total Failed: $fail_count"
+
+if [ $fail_count -gt 0 ] ; then
+        echo -e "\nFailed Test Cases : "
+        for test in  "${failed_tests[@]}" ; do
+                echo "$test"
+        done
+fi
