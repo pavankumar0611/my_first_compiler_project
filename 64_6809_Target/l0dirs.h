@@ -1,0 +1,5 @@
+#define TOPDIR "/opt/wcc"
+#define INCQBEDIR "/opt/wcc/include/qbe"
+#define INC6809DIR "/opt/wcc/include/6809"
+#define BINDIR "/opt/wcc/bin"
+#define LIB6809DIR "/opt/wcc/lib/6809"

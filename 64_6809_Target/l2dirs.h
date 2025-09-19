@@ -1,0 +1,5 @@
+#define TOPDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target"
+#define INCQBEDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/include/qbe"
+#define INC6809DIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/include/6809"
+#define BINDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2"
+#define LIB6809DIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/lib/6809"

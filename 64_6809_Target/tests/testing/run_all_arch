@@ -1,0 +1,78 @@
+#set -x
+#!/bin/sh
+# Run each test and compare against known good output
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 cpuname, e.g. $0 6809"
+  exit 1
+fi
+
+CPU=$1
+PASS=0
+FAIL=0
+FAIL_LIST=""
+
+# Build compiler if missing
+if [ ! -f ../../wcc ]; then
+  (cd .. && make install)
+fi
+
+# Process test cases
+for i in input*c; do
+  if [ ! -f "out.$i" ] && [ ! -f "err.$i" ]; then
+    echo "Can't run test on $i, no output file!"
+    continue
+  fi
+
+  echo -n "$i"
+
+  if [ -f "out.$i" ]; then
+    ../../wcc -o out -m "$CPU" "$i"
+    emu6809 ./out > "trial.$i"
+    rm -f out
+
+    cmp -s "out.$i" "trial.$i"
+    if [ $? -eq 1 ]; then
+      echo ": failed"
+      diff -c "out.$i" "trial.$i"
+      FAIL=$((FAIL + 1))
+      FAIL_LIST="$FAIL_LIST $i"
+    else
+      echo ": OK"
+      PASS=$((PASS + 1))
+    fi
+
+  elif [ -f "err.$i" ]; then
+    ../../wcc -o out -m "$CPU" "$i" 2> "trial.$i"
+    cmp -s "err.$i" "trial.$i"
+    if [ $? -eq 1 ]; then
+      echo ": failed"
+      diff -c "err.$i" "trial.$i"
+      FAIL=$((FAIL + 1))
+      FAIL_LIST="$FAIL_LIST $i"
+    else
+      echo ": OK"
+      PASS=$((PASS + 1))
+    fi
+  fi
+
+  rm -f out out.s "trial.$i"
+done
+
+# Final Summary
+echo
+echo "==========================="
+echo " Tests passed: $PASS"
+echo " Tests failed: $FAIL"
+
+if [ "$FAIL_LIST" != "" ]; then
+  echo
+  echo "******Failed tests******:"
+  for name in $FAIL_LIST; do
+    echo "  - $name"
+  done
+fi
+echo "==========================="
+
+# Exit with failure code if any test failed
+[ "$FAIL" -ne 0 ] && exit 1 || exit 0
