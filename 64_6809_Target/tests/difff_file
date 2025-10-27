@@ -1,0 +1,651 @@
+diff --git a/21_More_Operators/cg_arm.c b/21_More_Operators/cg_arm.c
+index 237e131..c9aa844 100644
+--- a/21_More_Operators/cg_arm.c
++++ b/21_More_Operators/cg_arm.c
+@@ -547,3 +547,9 @@ int cgstorderef(int r1, int r2, int type) {
+ 	}
+ 	return (r1);
+ }
++
++int cglogicaland(int r1, int r2, int cond) {
++}
++
++int cglogicalor(int r1, int r2, int cond) {
++}
+diff --git a/50_Mop_up_pt1/cg.c b/50_Mop_up_pt1/cg.c
+index 8aa3e93..949e501 100644
+--- a/50_Mop_up_pt1/cg.c
++++ b/50_Mop_up_pt1/cg.c
+@@ -406,15 +406,15 @@ int cglogor(int r1, int r2) {
+ 
+ 	// Test r1 and jump to true label if true
+ 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r1], reglist[r1]);
+-	fprintf(Outfile, "\tjne\tL%d\n", Ltrue);
++	fprintf(Outfile, "\tjne \tL%d\n", Ltrue);
+ 
+ 	// Test r2 and jump to true label if true
+ 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r2], reglist[r2]);
+-	fprintf(Outfile, "\tjne\tL%d\n", Ltrue);
++	fprintf(Outfile, "\tjne \tL%d\n", Ltrue);
+ 
+ 	// Didn't jump, so result is false
+ 	fprintf(Outfile, "\tmovq\t$0, %s\n", reglist[r1]);
+-	fprintf(Outfile, "\tjmp\tL%d\n", Lend);
++	fprintf(Outfile, "\tjmp \tL%d\n", Lend);
+ 
+ 	// Someone jumped to the true label, so result is true
+ 	cglabel(Ltrue);
+@@ -433,15 +433,15 @@ int cglogand(int r1, int r2) {
+ 
+ 	// Test r1 and jump to false label if not true
+ 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r1], reglist[r1]);
+-	fprintf(Outfile, "\tje\tL%d\n", Lfalse);
++	fprintf(Outfile, "\tje  \tL%d\n", Lfalse);
+ 
+ 	// Test r2 and jump to false label if not true
+ 	fprintf(Outfile, "\ttest\t%s, %s\n", reglist[r2], reglist[r2]);
+-	fprintf(Outfile, "\tje\tL%d\n", Lfalse);
++	fprintf(Outfile, "\tje  \tL%d\n", Lfalse);
+ 
+ 	// Didn't jump, so result is true
+ 	fprintf(Outfile, "\tmovq\t$1, %s\n", reglist[r1]);
+-	fprintf(Outfile, "\tjmp\tL%d\n", Lend);
++	fprintf(Outfile, "\tjmp \tL%d\n", Lend);
+ 
+ 	// Someone jumped to the false label, so result is false
+ 	cglabel(Lfalse);
+diff --git a/63_QBE/cg.c b/63_QBE/cg.c
+index c5d607e..9a27a85 100644
+--- a/63_QBE/cg.c
++++ b/63_QBE/cg.c
+@@ -158,8 +158,7 @@ void cgfuncpreamble(struct symtable *sym) {
+ 			// Get the total size for all elements (if an array).
+ 			// Round up to the nearest multiple of 8, to ensure that
+ 			// pointers are aligned on 8-byte boundaries
+-			size = locvar->size * locvar->nelems;
+-			size = (size + 7) >> 3;
++			size = locvar->size;
+ 			fprintf(Outfile, "  %%%s =l alloc8 %d\n", locvar->name, size);
+ 		} else if (locvar->type == P_CHAR) {
+ 			locvar->st_hasaddr = 1;
+diff --git a/63_QBE/defs.h b/63_QBE/defs.h
+index e36089d..95e036a 100644
+--- a/63_QBE/defs.h
++++ b/63_QBE/defs.h
+@@ -71,10 +71,10 @@ enum {
+ 	A_ADD, A_SUBTRACT, A_MULTIPLY, A_DIVIDE, A_MOD,		// 21
+ 	A_INTLIT, A_STRLIT, A_IDENT, A_GLUE,				// 26
+ 	A_IF, A_WHILE, A_DOWHILE , A_FUNCTION, A_WIDEN, A_RETURN,			// 30
+-	A_FUNCCALL, A_DEREF, A_ADDR, A_SCALE,				// 35
+-	A_PREINC, A_PREDEC, A_POSTINC, A_POSTDEC,			// 39
+-	A_NEGATE, A_INVERT, A_LOGNOT, A_TOBOOL, A_BREAK,		// 43
+-	A_CONTINUE, A_SWITCH, A_CASE, A_DEFAULT, A_CAST		// 48
++	A_FUNCCALL, A_DEREF, A_ADDR, A_SCALE,				// 36
++	A_PREINC, A_PREDEC, A_POSTINC, A_POSTDEC,			// 40
++	A_NEGATE, A_INVERT, A_LOGNOT, A_TOBOOL, A_BREAK,		// 44
++	A_CONTINUE, A_SWITCH, A_CASE, A_DEFAULT, A_CAST		// 49
+ };
+ 
+ // Primitive types. The bottom 4 bits is an integer
+diff --git a/64_6809_Target/L1/_cgen6809 b/64_6809_Target/L1/_cgen6809
+deleted file mode 100755
+index 8ea1609..0000000
+Binary files a/64_6809_Target/L1/_cgen6809 and /dev/null differ
+diff --git a/64_6809_Target/L1/_cparse6809 b/64_6809_Target/L1/_cparse6809
+deleted file mode 100755
+index caa38d2..0000000
+Binary files a/64_6809_Target/L1/_cparse6809 and /dev/null differ
+diff --git a/64_6809_Target/L1/_cscan b/64_6809_Target/L1/_cscan
+deleted file mode 100755
+index 236d796..0000000
+Binary files a/64_6809_Target/L1/_cscan and /dev/null differ
+diff --git a/64_6809_Target/L1/_desym b/64_6809_Target/L1/_desym
+deleted file mode 100755
+index 2c2e308..0000000
+Binary files a/64_6809_Target/L1/_desym and /dev/null differ
+diff --git a/64_6809_Target/L1/_detok b/64_6809_Target/L1/_detok
+deleted file mode 100755
+index 9c3f50b..0000000
+Binary files a/64_6809_Target/L1/_detok and /dev/null differ
+diff --git a/64_6809_Target/L1/_detree b/64_6809_Target/L1/_detree
+deleted file mode 100755
+index 959352b..0000000
+Binary files a/64_6809_Target/L1/_detree and /dev/null differ
+diff --git a/64_6809_Target/L1/cgen6809 b/64_6809_Target/L1/cgen6809
+deleted file mode 100755
+index 1b1f7ff..0000000
+--- a/64_6809_Target/L1/cgen6809
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L1/_cgen6809 "$@"
+diff --git a/64_6809_Target/L1/cparse6809 b/64_6809_Target/L1/cparse6809
+deleted file mode 100755
+index 7562e36..0000000
+--- a/64_6809_Target/L1/cparse6809
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L1/_cparse6809 "$@"
+diff --git a/64_6809_Target/L1/cpeep b/64_6809_Target/L1/cpeep
+deleted file mode 100755
+index c09df4b..0000000
+Binary files a/64_6809_Target/L1/cpeep and /dev/null differ
+diff --git a/64_6809_Target/L1/cscan b/64_6809_Target/L1/cscan
+deleted file mode 100755
+index a7ba0ed..0000000
+--- a/64_6809_Target/L1/cscan
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L1/_cscan "$@"
+diff --git a/64_6809_Target/L1/desym b/64_6809_Target/L1/desym
+deleted file mode 100755
+index 20ec79f..0000000
+--- a/64_6809_Target/L1/desym
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L1/_desym "$@"
+diff --git a/64_6809_Target/L1/detok b/64_6809_Target/L1/detok
+deleted file mode 100755
+index 20c8e40..0000000
+--- a/64_6809_Target/L1/detok
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L1/_detok "$@"
+diff --git a/64_6809_Target/L1/detree b/64_6809_Target/L1/detree
+deleted file mode 100755
+index f27554e..0000000
+--- a/64_6809_Target/L1/detree
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L1/_detree "$@"
+diff --git a/64_6809_Target/L1/wcc b/64_6809_Target/L1/wcc
+deleted file mode 100755
+index a6c1e47..0000000
+Binary files a/64_6809_Target/L1/wcc and /dev/null differ
+diff --git a/64_6809_Target/L2/_cgen6809 b/64_6809_Target/L2/_cgen6809
+deleted file mode 100755
+index 8ea1609..0000000
+Binary files a/64_6809_Target/L2/_cgen6809 and /dev/null differ
+diff --git a/64_6809_Target/L2/_cparse6809 b/64_6809_Target/L2/_cparse6809
+deleted file mode 100755
+index caa38d2..0000000
+Binary files a/64_6809_Target/L2/_cparse6809 and /dev/null differ
+diff --git a/64_6809_Target/L2/_cscan b/64_6809_Target/L2/_cscan
+deleted file mode 100755
+index 236d796..0000000
+Binary files a/64_6809_Target/L2/_cscan and /dev/null differ
+diff --git a/64_6809_Target/L2/_desym b/64_6809_Target/L2/_desym
+deleted file mode 100755
+index 2c2e308..0000000
+Binary files a/64_6809_Target/L2/_desym and /dev/null differ
+diff --git a/64_6809_Target/L2/_detok b/64_6809_Target/L2/_detok
+deleted file mode 100755
+index 9c3f50b..0000000
+Binary files a/64_6809_Target/L2/_detok and /dev/null differ
+diff --git a/64_6809_Target/L2/_detree b/64_6809_Target/L2/_detree
+deleted file mode 100755
+index 959352b..0000000
+Binary files a/64_6809_Target/L2/_detree and /dev/null differ
+diff --git a/64_6809_Target/L2/cgen6809 b/64_6809_Target/L2/cgen6809
+deleted file mode 100755
+index 2e4fa73..0000000
+--- a/64_6809_Target/L2/cgen6809
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_cgen6809 "$@"
+diff --git a/64_6809_Target/L2/cparse6809 b/64_6809_Target/L2/cparse6809
+deleted file mode 100755
+index f2bf11b..0000000
+--- a/64_6809_Target/L2/cparse6809
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_cparse6809 "$@"
+diff --git a/64_6809_Target/L2/cpeep b/64_6809_Target/L2/cpeep
+deleted file mode 100755
+index c09df4b..0000000
+Binary files a/64_6809_Target/L2/cpeep and /dev/null differ
+diff --git a/64_6809_Target/L2/cscan b/64_6809_Target/L2/cscan
+deleted file mode 100755
+index d88da28..0000000
+--- a/64_6809_Target/L2/cscan
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_cscan "$@"
+diff --git a/64_6809_Target/L2/desym b/64_6809_Target/L2/desym
+deleted file mode 100755
+index 3360d6a..0000000
+--- a/64_6809_Target/L2/desym
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_desym "$@"
+diff --git a/64_6809_Target/L2/detok b/64_6809_Target/L2/detok
+deleted file mode 100755
+index 902dd33..0000000
+--- a/64_6809_Target/L2/detok
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_detok "$@"
+diff --git a/64_6809_Target/L2/detree b/64_6809_Target/L2/detree
+deleted file mode 100755
+index 88f8cfd..0000000
+--- a/64_6809_Target/L2/detree
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_detree "$@"
+diff --git a/64_6809_Target/L2/wcc b/64_6809_Target/L2/wcc
+deleted file mode 100755
+index f60946a..0000000
+Binary files a/64_6809_Target/L2/wcc and /dev/null differ
+diff --git a/64_6809_Target/a.out b/64_6809_Target/a.out
+index 264e827..7017979 100755
+Binary files a/64_6809_Target/a.out and b/64_6809_Target/a.out differ
+diff --git a/64_6809_Target/cparse6809 b/64_6809_Target/cparse6809
+index 4569783..95fb51e 100755
+Binary files a/64_6809_Target/cparse6809 and b/64_6809_Target/cparse6809 differ
+diff --git a/64_6809_Target/cparseqbe b/64_6809_Target/cparseqbe
+index 2855526..235b16f 100755
+Binary files a/64_6809_Target/cparseqbe and b/64_6809_Target/cparseqbe differ
+diff --git a/64_6809_Target/dirs.h b/64_6809_Target/dirs.h
+index 6adb746..f9bdc46 100644
+--- a/64_6809_Target/dirs.h
++++ b/64_6809_Target/dirs.h
+@@ -1,5 +1,5 @@
+-#define TOPDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target"
+-#define INCQBEDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/include/qbe"
+-#define INC6809DIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/include/6809"
+-#define BINDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2"
+-#define LIB6809DIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/lib/6809"
++#define TOPDIR "/opt/wcc"
++#define INCQBEDIR "/opt/wcc/include/qbe"
++#define INC6809DIR "/opt/wcc/include/6809"
++#define BINDIR "/opt/wcc/bin"
++#define LIB6809DIR "/opt/wcc/lib/6809"
+diff --git a/64_6809_Target/expr.c b/64_6809_Target/expr.c
+index d3ea158..61f479a 100644
+--- a/64_6809_Target/expr.c
++++ b/64_6809_Target/expr.c
+@@ -53,6 +53,10 @@ struct ASTnode *expression_list(int endtoken) {
+ 	return (tree);
+ }
+ 
++//To keep the count of func arguments
++static int count_of_arg;
++
++
+ // Recursively check a function call's arguments
+ // against the function's parameters. We take the
+ // an AST subtree with the arguments and the pointer
+@@ -66,7 +70,7 @@ struct symtable *check_arg_vs_param(struct ASTnode *tree,
+ 	// No tree but there's a parameter, not enough args.
+ 	// Otherwise, nothing to do.
+ 	if (tree == NULL) {
+-		if (param != NULL && param->class==V_PARAM)
++		if (param != NULL && param->class==V_PARAM && param->nelems != funcptr->nelems)
+ 			fatal("Not enough arguments in function call A");
+ 		return (NULL);
+ 	}
+@@ -76,9 +80,12 @@ struct symtable *check_arg_vs_param(struct ASTnode *tree,
+ 		param = check_arg_vs_param(tree->left, param, funcptr);
+ 
+ 	// We've bottomed out of the recursion
+-	if (tree->right == NULL)
++	if (tree->right == NULL )
+ 		fatal("Not enough arguments in function call B");
+ 
++	//if(param->nelems != funcptr->nelems)
++	//	fatal("Not enough arguments in function call B");
++
+ 	if (param == NULL) {
+ 		// If the function allows arbitrary number of arguments,
+ 		// we can process this argument. Otherwise it's an error.
+@@ -103,14 +110,18 @@ struct symtable *check_arg_vs_param(struct ASTnode *tree,
+ 	// Ensure the arg/param types are compatible.
+ 	// Widen the argument if necessary
+ 	tree->right = modify_type(tree->right, param->type, param->ctype, 0);
+-	tree->rightid= tree->right->nodeid;
++	if (tree->right != NULL)
++		tree->rightid= tree->right->nodeid;
+ 	if (tree->right == NULL)
+ 		fatal("Incompatible argument type in function call");
+ 
++	if (param != NULL && param->class==V_PARAM) count_of_arg++;
++
+ 	// Now return the next parameter for our caller to process.
+ 	// Return NULL when we hit the first local, as they come
+ 	// after all the parameters.
+ 	if (param->next != NULL && param->next->class==V_LOCAL) return(NULL);
++
+ 	return (param->next);
+ }
+ 
+@@ -130,6 +141,8 @@ static struct ASTnode *funccall(void) {
+ 	// Parse the argument expression list
+ 	tree = expression_list(T_RPAREN);
+ 
++	count_of_arg = 0;
++
+ 	// Check type of each argument against the function's prototype
+ 	check_arg_vs_param(tree, funcptr->member, funcptr);
+ 
+@@ -139,6 +152,9 @@ static struct ASTnode *funccall(void) {
+ 	tree =
+ 		mkastunary(A_FUNCCALL, funcptr->type, funcptr->ctype, tree, funcptr, 0);
+ 
++	if (count_of_arg != funcptr->nelems)
++		fatal("Not enough arguments in function call B");
++
+ 	// Get the ')'
+ 	rparen();
+ 	return (tree);
+diff --git a/64_6809_Target/l2dirs.h b/64_6809_Target/l2dirs.h
+deleted file mode 100644
+index 6adb746..0000000
+--- a/64_6809_Target/l2dirs.h
++++ /dev/null
+@@ -1,5 +0,0 @@
+-#define TOPDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target"
+-#define INCQBEDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/include/qbe"
+-#define INC6809DIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/include/6809"
+-#define BINDIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2"
+-#define LIB6809DIR "/home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/lib/6809"
+diff --git a/64_6809_Target/small.c b/64_6809_Target/small.c
+index 5bd0d31..e944b81 100644
+--- a/64_6809_Target/small.c
++++ b/64_6809_Target/small.c
+@@ -1,12 +1,18 @@
+-int printf(char *fmt, ...);
++void foo(int x, int y, int x);
++int frst(int a);
++int foo_variable;
+ 
+-void main() {
+-        int x;
+-        long y ;
+-        char z;
+-x = 5;
+-y = -2;
+ 
+-printf("the value is %d %d\n", x , y);
++void foo(int x , int y , int x){
++	x = x + y + x;
++}
++
++
++
++void main() {
++	int y, x, z;
++	y = 5;
++	foo(y, x, z);
++//	printf("the value is %d \n",y );
+ }
+ 
+diff --git a/64_6809_Target/small.c_ast b/64_6809_Target/small.c_ast
+index 32ed64f..8015f89 100644
+Binary files a/64_6809_Target/small.c_ast and b/64_6809_Target/small.c_ast differ
+diff --git a/64_6809_Target/small.c_cpp b/64_6809_Target/small.c_cpp
+index 5bbd9fa..86099c6 100644
+--- a/64_6809_Target/small.c_cpp
++++ b/64_6809_Target/small.c_cpp
+@@ -2,14 +2,20 @@
+ # 0 "<built-in>"
+ # 0 "<command-line>"
+ # 1 "small.c"
+-int printf(char *fmt, ...);
++void foo(int x, int y, int x);
++int frst(int a);
++int foo_variable;
++
++
++void foo(int x , int y , int x){
++ x = x + y + x;
++}
++
++
+ 
+ void main() {
+-        int x;
+-        long y ;
+-        char z;
+-x = 5;
+-y = -2;
++ int y, x, z;
++ y = 5;
++ foo(y, x, z);
+ 
+-printf("the value is %d %d\n", x , y);
+ }
+diff --git a/64_6809_Target/small.c_idx b/64_6809_Target/small.c_idx
+index 0abc21a..e49dc4b 100644
+Binary files a/64_6809_Target/small.c_idx and b/64_6809_Target/small.c_idx differ
+diff --git a/64_6809_Target/small.c_o b/64_6809_Target/small.c_o
+index fd5dd26..2c03b30 100644
+Binary files a/64_6809_Target/small.c_o and b/64_6809_Target/small.c_o differ
+diff --git a/64_6809_Target/small.c_qbe b/64_6809_Target/small.c_qbe
+index af59125..75b3aab 100644
+--- a/64_6809_Target/small.c_qbe
++++ b/64_6809_Target/small.c_qbe
+@@ -1,56 +1,40 @@
+ ;
+ 	.code
+-;					line 3
++	.data
++	.export _foo_variable
++_foo_variable:
++	.word	0
++;					line 6
++	.code
++	.export _foo
++_foo:
++;					line 7
++	ldd 2,s
++	addd 4,s
++	addd 2,s
++	std 2,s
++L1:
++	rts
++;
++;					line 12
+ 	.export _main
+ _main:
+-	leas -7,s
+-;					line 7
++	leas -6,s
++;					line 14
+ 	ldd #5
+ 	std 0,s
+ ;
+-;					line 8
+-	ldd #65534
+-	ldy #65535
+-	sty 2,s
+-	std 4,s
+-;
+-;
+-;					line 10
+-	.literal
+-L2:
+-	.byte	116
+-	.byte	104
+-	.byte	101
+-	.byte	32
+-	.byte	118
+-	.byte	97
+-	.byte	108
+-	.byte	117
+-	.byte	101
+-	.byte	32
+-	.byte	105
+-	.byte	115
+-	.byte	32
+-	.byte	37
+-	.byte	100
+-	.byte	32
+-	.byte	37
+-	.byte	100
+-	.byte	10
+-	.byte	0
+-	.code
++;					line 15
+ 	ldd 4,s
+-	ldy 2,s
+ 	pshs d
+-	pshs y
+ 	ldd 4,s
+ 	pshs d
+-	ldd #L2
++	ldd 4,s
+ 	pshs d
+-	lbsr _printf
+-	leas 8,s
++	lbsr _foo
++	leas 6,s
+ ;
+-L1:
+-	leas 7,s
++L2:
++	leas 6,s
+ 	rts
+ ;
+diff --git a/64_6809_Target/small.c_s b/64_6809_Target/small.c_s
+index af59125..75b3aab 100644
+--- a/64_6809_Target/small.c_s
++++ b/64_6809_Target/small.c_s
+@@ -1,56 +1,40 @@
+ ;
+ 	.code
+-;					line 3
++	.data
++	.export _foo_variable
++_foo_variable:
++	.word	0
++;					line 6
++	.code
++	.export _foo
++_foo:
++;					line 7
++	ldd 2,s
++	addd 4,s
++	addd 2,s
++	std 2,s
++L1:
++	rts
++;
++;					line 12
+ 	.export _main
+ _main:
+-	leas -7,s
+-;					line 7
++	leas -6,s
++;					line 14
+ 	ldd #5
+ 	std 0,s
+ ;
+-;					line 8
+-	ldd #65534
+-	ldy #65535
+-	sty 2,s
+-	std 4,s
+-;
+-;
+-;					line 10
+-	.literal
+-L2:
+-	.byte	116
+-	.byte	104
+-	.byte	101
+-	.byte	32
+-	.byte	118
+-	.byte	97
+-	.byte	108
+-	.byte	117
+-	.byte	101
+-	.byte	32
+-	.byte	105
+-	.byte	115
+-	.byte	32
+-	.byte	37
+-	.byte	100
+-	.byte	32
+-	.byte	37
+-	.byte	100
+-	.byte	10
+-	.byte	0
+-	.code
++;					line 15
+ 	ldd 4,s
+-	ldy 2,s
+ 	pshs d
+-	pshs y
+ 	ldd 4,s
+ 	pshs d
+-	ldd #L2
++	ldd 4,s
+ 	pshs d
+-	lbsr _printf
+-	leas 8,s
++	lbsr _foo
++	leas 6,s
+ ;
+-L1:
+-	leas 7,s
++L2:
++	leas 6,s
+ 	rts
+ ;
+diff --git a/64_6809_Target/small.c_sym b/64_6809_Target/small.c_sym
+index 799dbde..760c8e6 100644
+Binary files a/64_6809_Target/small.c_sym and b/64_6809_Target/small.c_sym differ
+diff --git a/64_6809_Target/small.c_tok b/64_6809_Target/small.c_tok
+index 76db886..14c5ec7 100644
+Binary files a/64_6809_Target/small.c_tok and b/64_6809_Target/small.c_tok differ
+diff --git a/64_6809_Target/tests/a.out b/64_6809_Target/tests/a.out
+index c69f5ea..d94ff8a 100755
+Binary files a/64_6809_Target/tests/a.out and b/64_6809_Target/tests/a.out differ
+diff --git a/64_6809_Target/tests/input103.c b/64_6809_Target/tests/input103.c
+index f92c963..58fff65 100644
+--- a/64_6809_Target/tests/input103.c
++++ b/64_6809_Target/tests/input103.c
+@@ -5,6 +5,6 @@ void main() {
+         long y ;
+         char z;
+   printf("%d\n", sizeof(x));
+-  printf("%d\n", sizeof(y));
++  printf("%ld\n", sizeof(y));
+   printf("%d\n", sizeof(z));
+ }
+diff --git a/64_6809_Target/tests/run_all_arch_2 b/64_6809_Target/tests/run_all_arch_2
+index dc0bf03..9d11b1d 100755
+--- a/64_6809_Target/tests/run_all_arch_2
++++ b/64_6809_Target/tests/run_all_arch_2
+@@ -1,4 +1,4 @@
+-set -x
++#set -x
+ #!/bin/sh
+ # Run each test and compare against known good output
+ 
+diff --git a/64_6809_Target/tests/testing/input01.e b/64_6809_Target/tests/testing/input01.e
+deleted file mode 100644
+index a83c338..0000000
+--- a/64_6809_Target/tests/testing/input01.e
++++ /dev/null
+@@ -1,6 +0,0 @@
+-printf(char *fmt);
+-
+-int main() {
+-  int x;
+-  x= 2 + + 3 - * / ;
+-}
+diff --git a/64_6809_Target/tests/testing/input04.s b/64_6809_Target/tests/testing/input04.s
+deleted file mode 100644
+index e69de29..0000000

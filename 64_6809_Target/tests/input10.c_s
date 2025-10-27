@@ -1,0 +1,124 @@
+;
+	.code
+;					line 3
+	.export _main
+_main:
+	leas -3,s
+;					line 7
+	ldb #20
+	stb 2,s
+	clra
+	.literal
+L2:
+	.byte	37
+	.byte	100
+	.byte	10
+	.byte	0
+	.code
+	std R0+0
+	pshs d
+	ldd #L2
+	pshs d
+	lbsr _printf
+	leas 4,s
+;
+;
+;					line 8
+	ldd #10
+	std 0,s
+;
+;
+	.literal
+L3:
+	.byte	37
+	.byte	100
+	.byte	10
+	.byte	0
+	.code
+	ldd 0,s
+	pshs d
+	ldd #L3
+	pshs d
+	lbsr _printf
+	leas 4,s
+;
+;
+;					line 10
+;
+	ldd #1
+	std 0,s
+;
+;
+L4:
+	ldd 0,s
+	cmpd #5
+	bgt L5
+;
+	.literal
+L7:
+	.byte	37
+	.byte	100
+	.byte	10
+	.byte	0
+	.code
+	ldd 0,s
+	pshs d
+	ldd #L7
+	pshs d
+	lbsr _printf
+	leas 4,s
+;
+;
+	ldd 0,s
+	addd #1
+	std 0,s
+;
+;
+;
+	bra L4
+L5:
+;
+;
+;
+;					line 11
+;
+	ldb #253
+	stb 2,s
+;
+;
+L8:
+	ldb 2,s
+	cmpb #2
+	beq L9
+;
+	ldb 2,s
+	clra
+	.literal
+L11:
+	.byte	37
+	.byte	100
+	.byte	10
+	.byte	0
+	.code
+	std R0+0
+	pshs d
+	ldd #L11
+	pshs d
+	lbsr _printf
+	leas 4,s
+;
+;
+	ldb 2,s
+	addb #1
+	stb 2,s
+;
+;
+;
+	bra L8
+L9:
+;
+;
+L1:
+	leas 3,s
+	rts
+;

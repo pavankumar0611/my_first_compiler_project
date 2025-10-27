@@ -1,0 +1,36 @@
+;
+	.code
+	.literal
+L1:
+	.byte	72
+	.byte	101
+	.byte	108
+	.byte	108
+	.byte	111
+	.byte	32
+	.byte	119
+	.byte	111
+	.byte	114
+	.byte	108
+	.byte	100
+	.byte	0
+	.code
+	.data
+	.export _a
+_a:
+	.word	23
+	.export _b
+_b:
+	.word	100
+	.export _y
+_y:
+	.byte	72
+	.export _z
+_z:
+	.word	L1
+;					line 6
+	.code
+	.export _main
+_main:
+;					line 8
+	ldb _y+0

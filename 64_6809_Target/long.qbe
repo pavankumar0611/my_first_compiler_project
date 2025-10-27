@@ -1,23 +1,23 @@
 ;
 	.code
-;					line 3
+;					line 2
 	.export _main
 _main:
-	leas -7,s
-;					line 7
-	ldd #5
-	std 0,s
-;
-;					line 8
-	ldd #65534
+	leas -4,s
+;					line 5
+	ldd #65531
+	bge L2
 	ldy #65535
-	sty 2,s
-	std 4,s
-;
-;
-;					line 10
-	.literal
+	bra L3
 L2:
+	ldy #0
+L3:
+	sty 0,s
+	std 2,s
+;
+;					line 6
+	.literal
+L4:
 	.byte	116
 	.byte	104
 	.byte	101
@@ -32,25 +32,22 @@ L2:
 	.byte	115
 	.byte	32
 	.byte	37
+	.byte	108
 	.byte	100
 	.byte	32
-	.byte	37
-	.byte	100
 	.byte	10
 	.byte	0
 	.code
-	ldd 4,s
-	ldy 2,s
+	ldd 2,s
+	ldy 0,s
 	pshs d
 	pshs y
-	ldd 4,s
-	pshs d
-	ldd #L2
+	ldd #L4
 	pshs d
 	lbsr _printf
-	leas 8,s
+	leas 6,s
 ;
 L1:
-	leas 7,s
+	leas 4,s
 	rts
 ;

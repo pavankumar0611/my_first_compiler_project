@@ -1,0 +1,92 @@
+# 0 "out_space.c"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "out_space.c"
+# 1 "/opt/wcc/include/6809/stdio.h" 1 3 4
+
+
+# 1 "/opt/wcc/include/6809/stddef.h" 1 3 4
+
+
+
+
+
+
+
+
+# 8 "/opt/wcc/include/6809/stddef.h" 3 4
+typedef int size_t;
+# 4 "/opt/wcc/include/6809/stdio.h" 2 3 4
+# 15 "/opt/wcc/include/6809/stdio.h" 3 4
+struct __stdio_file {
+  char *bufpos;
+  char *bufread;
+  char *bufwrite;
+  char *bufstart;
+  char *bufend;
+
+  int fd;
+  int mode;
+  char unbuf ;
+  char unbuf1 ;
+  char unbuf2 ;
+  char unbuf3 ;
+  char unbuf4 ;
+  char unbuf5 ;
+  char unbuf6 ;
+  char unbuf7 ;
+  struct __stdio_file * next;
+};
+
+typedef struct __stdio_file FILE;
+
+
+
+
+FILE *__fopen(char *__path, int __fd, FILE * __stream, char *__mode);
+
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t fwrite(void *ptr, size_t size, size_t nmemb, FILE *stream);
+int fclose(FILE *stream);
+int printf(char *format, ...);
+int fprintf(FILE *stream, char *format, ...);
+int sprintf(char *str, char *format, ...);
+int snprintf(char *str, size_t size, char *format, ...);
+int fgetc(FILE *stream);
+int fgetc(FILE *stream);
+int getchar(void);
+int fputc(int c, FILE *stream);
+int fputs(char *s, FILE *stream);
+int putc(int c, FILE *stream);
+int putchar(int c);
+int puts(char *s);
+FILE *popen(char *command, char *type);
+int pclose(FILE *stream);
+char *fgets(char *s, int size, FILE *stream);
+int rename(char *path, char *newpath);
+int fseek(FILE *stream, long offset, int whence);
+long ftell(FILE *stream);
+FILE *tmpfile(void);
+
+
+
+
+
+
+
+extern FILE stdin[1];
+extern FILE stdout[1];
+extern FILE stderr[1];
+# 2 "out_space.c" 2
+
+
+# 3 "out_space.c"
+int a = 23, b = 100;
+char y = 'H', *z = "Hello world";
+
+int main() {
+
+  printf("%d %d %c %s\n", a , b, y, z);
+  return (0);
+}

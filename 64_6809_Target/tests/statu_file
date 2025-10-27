@@ -1,0 +1,333 @@
+On branch dummy_branch
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../../21_More_Operators/cg_arm.c
+	modified:   ../../50_Mop_up_pt1/cg.c
+	modified:   ../../63_QBE/cg.c
+	modified:   ../../63_QBE/defs.h
+	deleted:    ../L1/_cgen6809
+	deleted:    ../L1/_cparse6809
+	deleted:    ../L1/_cscan
+	deleted:    ../L1/_desym
+	deleted:    ../L1/_detok
+	deleted:    ../L1/_detree
+	deleted:    ../L1/cgen6809
+	deleted:    ../L1/cparse6809
+	deleted:    ../L1/cpeep
+	deleted:    ../L1/cscan
+	deleted:    ../L1/desym
+	deleted:    ../L1/detok
+	deleted:    ../L1/detree
+	deleted:    ../L1/wcc
+	deleted:    ../L2/_cgen6809
+	deleted:    ../L2/_cparse6809
+	deleted:    ../L2/_cscan
+	deleted:    ../L2/_desym
+	deleted:    ../L2/_detok
+	deleted:    ../L2/_detree
+	deleted:    ../L2/cgen6809
+	deleted:    ../L2/cparse6809
+	deleted:    ../L2/cpeep
+	deleted:    ../L2/cscan
+	deleted:    ../L2/desym
+	deleted:    ../L2/detok
+	deleted:    ../L2/detree
+	deleted:    ../L2/wcc
+	modified:   ../a.out
+	modified:   ../cparse6809
+	modified:   ../cparseqbe
+	modified:   ../dirs.h
+	modified:   ../expr.c
+	deleted:    ../l2dirs.h
+	modified:   ../small.c
+	modified:   ../small.c_ast
+	modified:   ../small.c_cpp
+	modified:   ../small.c_idx
+	modified:   ../small.c_o
+	modified:   ../small.c_qbe
+	modified:   ../small.c_s
+	modified:   ../small.c_sym
+	modified:   ../small.c_tok
+	modified:   a.out
+	modified:   input103.c
+	modified:   run_all_arch_2
+	deleted:    testing/input01.e
+	deleted:    testing/input04.s
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../05_Statements/comp1
+	../../05_Statements/out.s
+	../../05_Statements/sample.c
+	../../07_Comparisions/anu.c
+	../../07_Comparisions/comp1
+	../../07_Comparisions/modified.s
+	../../07_Comparisions/out
+	../../07_Comparisions/out.s
+	../../07_Comparisions/sample.c
+	../../08_if_statements/comp1
+	../../08_if_statements/out.s
+	../../08_if_statements/sample.c
+	../../09_while_loops/comp1
+	../../09_while_loops/out
+	../../09_while_loops/out.s
+	../../09_while_loops/simple.c
+	../../12_types_pt1/comp1
+	../../12_types_pt1/out.s
+	../../12_types_pt1/tests/out.s
+	../../14_Arm_Platform/comp1
+	../../14_Arm_Platform/comp1arm
+	../../14_Arm_Platform/compn
+	../../17_Scaling_Offsets/comp1
+	../../17_Scaling_Offsets/tests/out.s
+	../../19_Arrays_pt1/comp1
+	../../19_Arrays_pt1/comparm
+	../../19_Arrays_pt1/out
+	../../19_Arrays_pt1/out.s
+	../../19_Arrays_pt1/sample.c
+	../../20_Char_Str_Literals/comp1
+	../../20_Char_Str_Literals/comparm
+	../../20_Char_Str_Literals/out
+	../../20_Char_Str_Literals/out.s
+	../../20_Char_Str_Literals/sample.c
+	../../21_More_Operators/comp1
+	../../21_More_Operators/comparm
+	../../21_More_Operators/out
+	../../21_More_Operators/out.s
+	../../21_More_Operators/reg.c
+	../../21_More_Operators/sample.c
+	../../25_Function_Arguments/comp1
+	../../25_Function_Arguments/out.s
+	../../26_Function_Prototypes/first
+	../../26_Function_Prototypes/out.s
+	../../26_Function_Prototypes/pavan
+	../../26_Function_Prototypes/pavan.c
+	../../27_Testing_Errors/comp1
+	../../27_Testing_Errors/deep
+	../../27_Testing_Errors/pavan
+	../../27_Testing_Errors/tests/testing/pavan
+	../../28_Runtime_Flags/a.out
+	../../28_Runtime_Flags/cwj
+	../../28_Runtime_Flags/test.c
+	../../32_Struct_Access_pt1/a.out
+	../../32_Struct_Access_pt1/cwj
+	../../32_Struct_Access_pt1/pavan.c
+	../../32_Struct_Access_pt1/pavan.s
+	../../32_Struct_Access_pt1/sample.c
+	../../32_Struct_Access_pt1/sample.s
+	../../33_Unions/a.out
+	../../33_Unions/cwj
+	../../33_Unions/union.c
+	../../34_Enums_and_Typedefs/cwj
+	../../35_Preprocessor/tests/testing/input33.c
+	../../35_Preprocessor/tests/testing/input34.c
+	../../35_Preprocessor/tests/testing/input35.c
+	../../35_Preprocessor/tests/testing/input36.c
+	../../35_Preprocessor/tests/testing/input37.c
+	../../35_Preprocessor/tests/testing/input38.c
+	../../35_Preprocessor/tests/testing/input39.c
+	../../35_Preprocessor/tests/testing/input40.c
+	../../35_Preprocessor/tests/testing/input41.c
+	../../35_Preprocessor/tests/testing/input42.c
+	../../35_Preprocessor/tests/testing/input43.c
+	../../35_Preprocessor/tests/testing/input44.c
+	../../35_Preprocessor/tests/testing/input45.c
+	../../35_Preprocessor/tests/testing/out.input01.c
+	../../35_Preprocessor/tests/testing/out.input02.c
+	../../35_Preprocessor/tests/testing/out.input03.c
+	../../35_Preprocessor/tests/testing/out.input04.c
+	../../35_Preprocessor/tests/testing/out.input05.c
+	../../35_Preprocessor/tests/testing/out.input06.c
+	../../35_Preprocessor/tests/testing/out.input07.c
+	../../35_Preprocessor/tests/testing/out.input08.c
+	../../35_Preprocessor/tests/testing/out.input09.c
+	../../35_Preprocessor/tests/testing/out.input10.c
+	../../35_Preprocessor/tests/testing/out.input11.c
+	../../35_Preprocessor/tests/testing/out.input12.c
+	../../35_Preprocessor/tests/testing/out.input13.c
+	../../35_Preprocessor/tests/testing/out.input14.c
+	../../35_Preprocessor/tests/testing/out.input15.c
+	../../35_Preprocessor/tests/testing/out.input16.c
+	../../35_Preprocessor/tests/testing/out.input17.c
+	../../35_Preprocessor/tests/testing/out.input18.c
+	../../35_Preprocessor/tests/testing/out.input19.c
+	../../35_Preprocessor/tests/testing/out.input20.c
+	../../35_Preprocessor/tests/testing/out.input21.c
+	../../35_Preprocessor/tests/testing/out.input22.c
+	../../35_Preprocessor/tests/testing/out.input25.c
+	../../35_Preprocessor/tests/testing/out.input26.c
+	../../35_Preprocessor/tests/testing/out.input27.c
+	../../35_Preprocessor/tests/testing/out.input28.c
+	../../35_Preprocessor/tests/testing/out.input29.c
+	../../35_Preprocessor/tests/testing/out.input30.c
+	../../35_Preprocessor/tests/testing/out.input31.c
+	../../35_Preprocessor/tests/testing/out.input32.c
+	../../35_Preprocessor/tests/testing/out.input33.c
+	../../35_Preprocessor/tests/testing/out.input34.c
+	../../35_Preprocessor/tests/testing/out.input35.c
+	../../35_Preprocessor/tests/testing/out.input36.c
+	../../35_Preprocessor/tests/testing/out.input37.c
+	../../35_Preprocessor/tests/testing/out.input38.c
+	../../35_Preprocessor/tests/testing/out.input39.c
+	../../35_Preprocessor/tests/testing/out.input40.c
+	../../35_Preprocessor/tests/testing/out.input41.c
+	../../35_Preprocessor/tests/testing/out.input42.c
+	../../35_Preprocessor/tests/testing/out.input43.c
+	../../35_Preprocessor/tests/testing/out.input44.c
+	../../35_Preprocessor/tests/testing/out.input45.c
+	../../37_Switch/a.out
+	../../37_Switch/cwj
+	../../37_Switch/tests/a.out
+	../../37_Switch/tests/input01.s
+	../../37_Switch/tests/input02.s
+	../../37_Switch/tests/input05.s
+	../../37_Switch/tests/input47.s
+	../../38_Dangling_Else/cwj
+	../../38_Dangling_Else/sample.c
+	../../39_Var_Initialisation_pt1/cwj
+	../../39_Var_Initialisation_pt1/sample.c
+	../../40_Var_Initialisation_pt2/cwj
+	../../40_Var_Initialisation_pt2/sampls.c
+	../../40_Var_Initialisation_pt2/sampls.o
+	../../40_Var_Initialisation_pt2/sampls.s
+	../../41_Local_Var_Init/cwj
+	../../42_Casting/cwj
+	../../42_Casting/defs.e
+	../../42_Casting/defs.s
+	../../42_Casting/dlt.c
+	../../42_Casting/read.c
+	../../42_Casting/read.s
+	../../42_Casting/sample.c
+	../../42_Casting/sample.o
+	../../42_Casting/smaple.c
+	../../42_Casting/smaple.s
+	../../44_Fold_Optimisation/cwj
+	../../44_Fold_Optimisation/sam.c
+	../../44_Fold_Optimisation/sam.o
+	../../45_Globals_Again/a.out
+	../../45_Globals_Again/cwj
+	../../45_Globals_Again/g.c
+	../../45_Globals_Again/g.s
+	../../45_Globals_Again/sam.c
+	../../47_Sizeof/a.out
+	../../47_Sizeof/cwj
+	../../47_Sizeof/demo.c
+	../../47_Sizeof/demo.s
+	../../47_Sizeof/small.c
+	../../50_Mop_up_pt1/cwj
+	../../50_Mop_up_pt1/decl.e
+	../../50_Mop_up_pt1/tests/input75.s
+	../../50_Mop_up_pt1/tests/input77.s
+	../../51_Arrays_pt2/cwj
+	../../51_Arrays_pt2/tests/input77.s
+	../../51_Arrays_pt2/tests/input80.e
+	../../52_Pointers_pt2/a.out
+	../../52_Pointers_pt2/cwj
+	../../52_Pointers_pt2/sample.c
+	../../52_Pointers_pt2/sample.s
+	../../52_Pointers_pt2/tests/input80.e
+	../../52_Pointers_pt2/tests/input81.s
+	../../53_Mop_up_pt2/a.out
+	../../53_Mop_up_pt2/and_or.c
+	../../53_Mop_up_pt2/and_or.s
+	../../53_Mop_up_pt2/cwj
+	../../53_Mop_up_pt2/reduced_andor.c
+	../../53_Mop_up_pt2/reduced_andor.s
+	../../53_Mop_up_pt2/return.c
+	../../53_Mop_up_pt2/return.o
+	../../53_Mop_up_pt2/tests/a.out
+	../../53_Mop_up_pt2/tests/input80.e
+	../../53_Mop_up_pt2/tests/input87.s
+	../../53_Mop_up_pt2/tests/input92.s
+	../../54_Reg_Spills/a.out
+	../../54_Reg_Spills/cwj
+	../../54_Reg_Spills/logor.c
+	../../54_Reg_Spills/logor.s
+	../../54_Reg_Spills/out
+	../../54_Reg_Spills/small.c
+	../../54_Reg_Spills/small.s
+	../../54_Reg_Spills/tests/a.out
+	../../55_Reg_spill_opt/
+	../../56_Local_Arrays/arra.c
+	../../56_Local_Arrays/cwj
+	../../57_Mop_up_pt3/cwj
+	../../62_Cleanup/a.out
+	../../62_Cleanup/cwj
+	../../62_Cleanup/sample.c
+	../../62_Cleanup/struct.c
+	../../62_Cleanup/switch.c
+	../../62_Cleanup/switch.s
+	../../62_Cleanup/tests/a.out
+	../../62_Cleanup/tests/input06.s
+	../../62_Cleanup/tests/input22.s
+	../../62_Cleanup/tests/input34.s
+	../../62_Cleanup/tests/input84.s
+	../../62_Cleanup/tests/input85.s
+	../../63_QBE/a.out
+	../../63_QBE/cwj
+	../../63_QBE/cwj2
+	../../63_QBE/cwj3
+	../../63_QBE/cwj4
+	../../63_QBE/dummy.c
+	../../63_QBE/pri.c
+	../../63_QBE/pri.q
+	../../63_QBE/pri.s
+	../../63_QBE/small.c
+	../../63_QBE/small.q
+	../../63_QBE/small.s
+	../../63_QBE/tests/a.out
+	../../63_QBE/tests/input06.q
+	../../63_QBE/tests/input06.s
+	../../63_QBE/tests/input103.q
+	../../63_QBE/tests/input103.s
+	../../63_QBE/tests/input22.e
+	../../63_QBE/tests/input22.q
+	../../63_QBE/tests/input22.s
+	../../63_QBE/tests/input34.q
+	../../63_QBE/tests/input34.s
+	../data.bin
+	../exit.c
+	../exit.c_ast
+	../exit.c_cpp
+	../exit.c_idx
+	../exit.c_o
+	../exit.c_qbe
+	../exit.c_s
+	../exit.c_sym
+	../exit.c_tok
+	../fail.qbe
+	../ftell.c
+	../ftell.s
+	../long.qbe
+	../old
+	../out_space.c
+	../out_space.c_ast
+	../out_space.c_cpp
+	../out_space.c_idx
+	../out_space.c_o
+	../out_space.c_qbe
+	../out_space.c_s
+	../out_space.c_sym
+	../out_space.c_tok
+	../reading.c
+	difff_file
+	input10.c_ast
+	input10.c_cpp
+	input10.c_idx
+	input10.c_o
+	input10.c_qbe
+	input10.c_s
+	input10.c_sym
+	input10.c_tok
+	statu_file
+	testing/err.input62.c
+	testing/err.input63.c
+	testing/err.input64.c
+	testing/err.input65.c
+	testing/input62.c
+	testing/input63.c
+	testing/input64.c
+	testing/input65.c
+
+no changes added to commit (use "git add" and/or "git commit -a")
