@@ -53,6 +53,9 @@ struct ASTnode *expression_list(int endtoken) {
 	return (tree);
 }
 
+//To keep the count of func arguments
+static int count_of_arg;
+
 // Recursively check a function call's arguments
 // against the function's parameters. We take the
 // an AST subtree with the arguments and the pointer
@@ -66,8 +69,8 @@ struct symtable *check_arg_vs_param(struct ASTnode *tree,
 	// No tree but there's a parameter, not enough args.
 	// Otherwise, nothing to do.
 	if (tree == NULL) {
-		if (param != NULL && param->class==V_PARAM)
-			fatal("Not enough arguments in function call A");
+		if (param != NULL && param->class==V_PARAM && param->nelems != funcptr->nelems)
+			fatal("Not enough arguments in function call");
 		return (NULL);
 	}
 
@@ -77,7 +80,7 @@ struct symtable *check_arg_vs_param(struct ASTnode *tree,
 
 	// We've bottomed out of the recursion
 	if (tree->right == NULL)
-		fatal("Not enough arguments in function call B");
+		fatal("Not enough arguments in function call");
 
 	if (param == NULL) {
 		// If the function allows arbitrary number of arguments,
@@ -103,9 +106,13 @@ struct symtable *check_arg_vs_param(struct ASTnode *tree,
 	// Ensure the arg/param types are compatible.
 	// Widen the argument if necessary
 	tree->right = modify_type(tree->right, param->type, param->ctype, 0);
-	tree->rightid= tree->right->nodeid;
+	if (tree->right != NULL)
+		tree->rightid= tree->right->nodeid;
+
 	if (tree->right == NULL)
 		fatal("Incompatible argument type in function call");
+
+	if (param != NULL && param->class==V_PARAM) count_of_arg++;
 
 	// Now return the next parameter for our caller to process.
 	// Return NULL when we hit the first local, as they come
@@ -130,6 +137,8 @@ static struct ASTnode *funccall(void) {
 	// Parse the argument expression list
 	tree = expression_list(T_RPAREN);
 
+	count_of_arg = 0;
+
 	// Check type of each argument against the function's prototype
 	check_arg_vs_param(tree, funcptr->member, funcptr);
 
@@ -138,6 +147,10 @@ static struct ASTnode *funccall(void) {
 	// Also record the function's symbol-id
 	tree =
 		mkastunary(A_FUNCCALL, funcptr->type, funcptr->ctype, tree, funcptr, 0);
+
+	if (count_of_arg != funcptr->nelems)
+		fatal("Not enough arguments in function call");
+
 
 	// Get the ')'
 	rparen();

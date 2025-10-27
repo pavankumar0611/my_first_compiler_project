@@ -1,2 +1,0 @@
-#!/bin/sh
-exec emu6809 /home/pavankohli/compiler/my_first_compiler_project/64_6809_Target/L2/_desym "$@"
